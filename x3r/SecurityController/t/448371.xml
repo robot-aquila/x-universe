@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<language id="44">
+<page id="8371" title="SC page" descr="">
+	<t id="1">[author]%s[/author][title]Security Alert[/title]</t>
+	<t id="2">In sector %s: %s\n</t>
+	<t id="5">enemy ships has been detected</t>
+	<t id="6">dangerous ships has been detected</t>
+	<t id="7">aggressive action from %s with signature %s</t>
+    <t id="8">Retreating to %s\n</t>
+    <t id="100">%s next+%s stage=%s sector=[%s] ship=[%s]</t>
+</page>
+<page id="2010" title="SC commands" descr="">
+	<t id="1256">\033GSC:\033Z Security Controller</t>
+</page>
+<page id="2011" title="SC short commands" descr="">
+	<t id="1256">Sec.Ctrl.</t>
+</page>
+<page id="2022" title="SC commands info" descr="">
+	<t id="1256">Run Security Controller</t>
+</page>
+</language>

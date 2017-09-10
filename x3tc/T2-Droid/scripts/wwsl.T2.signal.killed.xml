@@ -1,0 +1,211 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>wwsl.T2.signal.killed</name>
+<version>301</version>
+<engineversion>45</engineversion>
+<description>T2: Ship has been killed</description>
+<arguments>
+<argument index="1" name="Killer" type="Значение" desc="Killer" />
+<argument index="2" name="Cmd" type="Значение" desc="Cmd" />
+</arguments>
+<sourcetext>
+<line linenr="001" indent=""><var>$T2.Config=</var><text>get&#160;global&#160;variable:&#160;name=</text><var>'wwsl.T2.global'</var></line>
+<line linenr="002" indent=""><var>$Dummy=</var><var>$T2.Config</var><text>[</text><var>4</var><text>]</text></line>
+<line linenr="003" indent=""><var>$Debug=</var><var>32</var><text>&#160;</text><var>&amp;</var><text>&#160;</text><var>$Dummy</var></line>
+<line linenr="004" indent=""><var>do&#160;if&#160;</var><var>$Debug</var></line>
+<line linenr="005" interruptable="@" indent="&#160;"><var>=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function3</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>591</var><text>&#160;</text><text>&#160;arg1=</text><var>':&#160;Killed&#160;by&#160;%s&#160;(during&#160;%s)'</var><text>&#160;</text><text>&#160;arg2=</text><var>$Killer</var><text>&#160;</text><text>&#160;arg3=</text><var>$Cmd</var></line>
+<line linenr="006" indent=""><text>gosub&#160;</text><var>CleanUp</var></line>
+<line linenr="007" indent=""></line>
+<line linenr="008" interruptable="@" indent=""><var>$Result=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>lib.ship.signal.killed.trader</call><text>&#160;:&#160;</text><text>&#160;killer=</text><var>$Killer</var><text>&#160;</text><text>&#160;cmd=</text><var>$Cmd</var><text>&#160;</text><text>&#160;cmdtarget=</text><var>null</var><text>&#160;</text><text>&#160;cmdtarget2=</text><var>null</var><text>&#160;</text><text>&#160;cmdpar1=</text><var>null</var><text>&#160;</text><text>&#160;cmdpar2=</text><var>null</var></line>
+<line linenr="009" indent=""><text>return&#160;</text><var>$Result</var></line>
+<line linenr="010" indent=""></line>
+<line linenr="011" indent=""><var>CleanUp</var><text>:</text></line>
+<line linenr="012" interruptable="@" indent=""><var>=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function1</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>510</var><text>&#160;</text><text>&#160;arg1=</text><var>-1</var></line>
+<line linenr="013" interruptable="@" indent=""><var>$Dummy=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function0</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>513</var></line>
+<line linenr="014" indent=""><var>do&#160;if&#160;</var><var>$Dummy</var></line>
+<line linenr="015" interruptable="@" indent="&#160;"><var>=</var><var>$Dummy&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function1</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>511</var><text>&#160;</text><text>&#160;arg1=</text><var>[THIS]</var></line>
+<line linenr="016" indent=""><text>endsub</text></line>
+<line linenr="017" indent=""><text>return&#160;</text><var>null</var></line>
+</sourcetext>
+<codearray>
+
+<sval type="array" size="10">
+  <sval type="string" val="wwsl.T2.signal.killed"/>
+  <sval type="int" val="45"/>
+  <sval type="string" val="T2: Ship has been killed"/>
+  <sval type="int" val="301"/>
+  <sval type="int" val="0"/>
+  <sval type="array" size="6">
+    <sval type="string" val="Killer"/>
+    <sval type="string" val="Cmd"/>
+    <sval type="string" val="T2.Config"/>
+    <sval type="string" val="Dummy"/>
+    <sval type="string" val="Debug"/>
+    <sval type="string" val="Result"/>
+  </sval>
+  <sval type="array" size="15">
+    <sval type="array" size="4">
+      <sval type="int" val="158"/>
+      <sval type="int" val="5"/>
+      <sval type="string" val="wwsl.T2.global"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="6">
+      <sval type="int" val="129"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="4"/>
+    </sval>
+    <sval type="array" size="13">
+      <sval type="int" val="104"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="32"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="-1"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="-2"/>
+    </sval>
+    <sval type="array" size="7">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-1610611448"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="-1"/>
+    </sval>
+    <sval type="array" size="14">
+      <sval type="int" val="102"/>
+      <sval type="string" val="wwsl.T2.function3"/>
+      <sval type="int" val="-2147483647"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="591"/>
+      <sval type="int" val="5"/>
+      <sval type="string" val=": Killed by %s (during %s)"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="1"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="1167"/>
+      <sval type="int" val="8"/>
+    </sval>
+    <sval type="array" size="18">
+      <sval type="int" val="102"/>
+      <sval type="string" val="lib.ship.signal.killed.trader"/>
+      <sval type="int" val="5"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="103"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="5"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="101"/>
+      <sval type="string" val="CleanUp"/>
+    </sval>
+    <sval type="array" size="10">
+      <sval type="int" val="102"/>
+      <sval type="string" val="wwsl.T2.function1"/>
+      <sval type="int" val="-2147483647"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="510"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="-1"/>
+    </sval>
+    <sval type="array" size="8">
+      <sval type="int" val="102"/>
+      <sval type="string" val="wwsl.T2.function0"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="513"/>
+    </sval>
+    <sval type="array" size="7">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-1610609400"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="-1"/>
+    </sval>
+    <sval type="array" size="10">
+      <sval type="int" val="102"/>
+      <sval type="string" val="wwsl.T2.function1"/>
+      <sval type="int" val="-2147483647"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="511"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+    </sval>
+    <sval type="array" size="1">
+      <sval type="int" val="1168"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="103"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+  </sval>
+  <sval type="array" size="2">
+    <sval type="array" size="2">
+      <sval type="int" val="9"/>
+      <sval type="string" val="Killer"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="9"/>
+      <sval type="string" val="Cmd"/>
+    </sval>
+  </sval>
+  <sval type="array" size="2">
+    <sval type="array" size="2">
+      <sval type="int" val="6"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="8"/>
+      <sval type="int" val="2"/>
+    </sval>
+  </sval>
+  <sval type="int" val="0"/>
+</sval>
+
+</codearray>
+</script>

@@ -1,0 +1,34 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>!init.T2.set.mod</name>
+<version>0</version>
+<engineversion>41</engineversion>
+<description>Set game to modified</description>
+<arguments>
+</arguments>
+<sourcetext>
+<line linenr="001" indent=""><text>return&#160;</text><var>null</var></line>
+</sourcetext>
+<codearray>
+
+<sval type="array" size="10">
+  <sval type="string" val="!init.T2.set.mod"/>
+  <sval type="int" val="40"/>
+  <sval type="string" val="Set game to modified"/>
+  <sval type="int" val="3101"/>
+  <sval type="int" val="0"/>
+  <sval type="int" val="0"/>
+  <sval type="array" size="1">
+    <sval type="array" size="3">
+      <sval type="int" val="103"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+  </sval>
+  <sval type="int" val="0"/>
+  <sval type="int" val="0"/>
+  <sval type="int" val="0"/>
+</sval>
+</codearray>
+</script>

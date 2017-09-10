@@ -1,0 +1,565 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>wwsl.util.unloadProduct</name>
+<version>301</version>
+<engineversion>45</engineversion>
+<description>T2: Common - Sell/Unload/Transfer ware to</description>
+<arguments>
+<argument index="1" name="Ware" type="Перем/Товар" desc="Ware" />
+<argument index="2" name="Amount" type="Перем/Число" desc="Amount" />
+<argument index="3" name="Target" type="Перем/Корабль/Станция" desc="Target" />
+<argument index="4" name="Price" type="Перем/Число" desc="Price" />
+</arguments>
+<sourcetext>
+<line linenr="001" indent=""><comment><text>*&#160;</text><var>Summary:</var></comment></line>
+<line linenr="002" indent=""><comment><text>*&#160;</text><var>Sell&#160;or&#160;unload&#160;ware&#160;to&#160;contragent&#160;of&#160;any&#160;possible&#160;type:</var></comment></line>
+<line linenr="003" indent=""><comment><text>*&#160;</text><var>station,&#160;ship&#160;docked&#160;at,&#160;remote&#160;ship.</var></comment></line>
+<line linenr="004" indent=""><comment><text>*&#160;</text><var>The&#160;script&#160;must&#160;be&#160;used&#160;for&#160;all&#160;ware&#160;transfers&#160;from&#160;this&#160;ship.</var></comment></line>
+<line linenr="005" indent=""><comment><text>*&#160;</text><var>This&#160;needed&#160;to&#160;provide&#160;signal&#160;generating&#160;for&#160;remote&#160;transfers.</var></comment></line>
+<line linenr="006" indent=""></line>
+<line linenr="007" indent=""><comment><text>*&#160;</text><var>Arguments:</var></comment></line>
+<line linenr="008" indent=""><comment><text>*&#160;</text><var>$Ware&#160;-&#160;The&#160;ware&#160;to&#160;unload&#160;from&#160;cargo&#160;bay.</var></comment></line>
+<line linenr="009" indent=""><comment><text>*&#160;</text><var>$Amount&#160;-&#160;Amount&#160;to&#160;be&#160;unloaded.</var></comment></line>
+<line linenr="010" indent=""><comment><text>*&#160;</text><var>$Target&#160;-&#160;Station&#160;or&#160;ship&#160;to&#160;unload&#160;to&#160;(optional).</var></comment></line>
+<line linenr="011" indent=""><comment><text>*&#160;</text><var>&#160;&#160;&#160;The&#160;main&#160;goal&#160;of&#160;the&#160;argument&#160;is&#160;to&#160;specify&#160;remote&#160;ship&#160;to&#160;transfer&#160;to.</var></comment></line>
+<line linenr="012" indent=""><comment><text>*&#160;</text><var>&#160;&#160;&#160;If&#160;target&#160;is&#160;a&#160;station,&#160;then&#160;additional&#160;check&#160;of&#160;equality&#160;with&#160;DOCKEDAT</var></comment></line>
+<line linenr="013" indent=""><comment><text>*&#160;</text><var>&#160;&#160;&#160;will&#160;be&#160;executed.&#160;If&#160;omitted,&#160;then&#160;DOCKEDAT&#160;will&#160;be&#160;used.</var></comment></line>
+<line linenr="014" indent=""><comment><text>*&#160;</text><var>$Price&#160;-&#160;The&#160;min&#160;price&#160;to&#160;sell&#160;at&#160;station&#160;or&#160;fixed&#160;price&#160;for&#160;remote&#160;transfer.</var></comment></line>
+<line linenr="015" indent=""><comment><text>*&#160;</text><var>&#160;&#160;&#160;This&#160;parameter&#160;is&#160;optional.&#160;If&#160;not&#160;specified&#160;and&#160;target&#160;is&#160;a&#160;station,&#160;then</var></comment></line>
+<line linenr="016" indent=""><comment><text>*&#160;</text><var>&#160;&#160;&#160;station&#160;price&#160;will&#160;be&#160;used.&#160;If&#160;not&#160;specified&#160;and&#160;target&#160;is&#160;a&#160;ship,&#160;then</var></comment></line>
+<line linenr="017" indent=""><comment><text>*&#160;</text><var>&#160;&#160;&#160;then&#160;average&#160;price&#160;of&#160;ware&#160;will&#160;be&#160;used.</var></comment></line>
+<line linenr="018" indent=""></line>
+<line linenr="019" indent=""><comment><text>*&#160;</text><var>Returns:</var></comment></line>
+<line linenr="020" indent=""><comment><text>*&#160;</text><var>Actual&#160;amount&#160;of&#160;ware&#160;sold.</var></comment></line>
+<line linenr="021" indent=""></line>
+<line linenr="022" indent=""><var>skip&#160;if</var><var>$Target</var></line>
+<line linenr="023" indent="&#160;"><var>$Target=</var><var>[DOCKEDAT]</var></line>
+<line linenr="024" interruptable="@" indent=""><var>skip&#160;if</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function1</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>623</var><text>&#160;</text><text>&#160;arg1=</text><var>$Target</var></line>
+<line linenr="025" indent="&#160;"><text>return&#160;</text><var>0</var></line>
+<line linenr="026" interruptable="@" indent=""><var>$CargoAmount=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function1</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>609</var><text>&#160;</text><text>&#160;arg1=</text><var>$Ware</var></line>
+<line linenr="027" indent=""><var>skip&#160;if</var><var>$CargoAmount</var><text>&#160;</text><var>&gt;</var><text>&#160;</text><var>0</var></line>
+<line linenr="028" indent="&#160;"><text>return&#160;</text><var>0</var></line>
+<line linenr="029" indent=""><var>skip&#160;if</var><var>$CargoAmount</var><text>&#160;</text><var>&gt;=</var><text>&#160;</text><var>$Amount</var></line>
+<line linenr="030" indent="&#160;"><var>$Amount=</var><var>$CargoAmount</var></line>
+<line linenr="031" indent=""></line>
+<line linenr="032" indent=""><var>if</var><var>$Target&#160;-&gt;</var><text>&#160;is&#160;of&#160;class&#160;</text><var>Станция</var></line>
+<line linenr="033" indent="&#160;"><var>if</var><var>$Price</var></line>
+<line linenr="034" indent="&#160;&#160;"><var>$tmp=</var><var>$Target&#160;-&gt;</var><text>&#160;get&#160;price&#160;of&#160;ware&#160;</text><var>$Ware</var></line>
+<line linenr="035" indent="&#160;&#160;"><var>skip&#160;if</var><var>$tmp</var><text>&#160;</text><var>&gt;=</var><text>&#160;</text><var>$Price</var></line>
+<line linenr="036" indent="&#160;&#160;&#160;"><text>return&#160;</text><var>0</var></line>
+<line linenr="037" indent="&#160;"><text>end</text></line>
+<line linenr="038" indent="&#160;"><var>$Sold=</var><var>[THIS]&#160;-&gt;</var><text>&#160;sell&#160;</text><var>$Amount</var><text>&#160;units&#160;of&#160;</text><var>$Ware</var></line>
+<line linenr="039" indent=""><text>else</text></line>
+<line linenr="040" indent="&#160;"><var>skip&#160;if</var><var>$Price</var></line>
+<line linenr="041" indent="&#160;&#160;"><var>$Price=</var><text>get&#160;average&#160;price&#160;of&#160;ware&#160;</text><var>$Ware</var></line>
+<line linenr="042" interruptable="@" indent="&#160;"><var>$Target.Amount=</var><var>$Target&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function1</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>613</var><text>&#160;</text><text>&#160;arg1=</text><var>$Ware</var></line>
+<line linenr="043" indent="&#160;"><var>skip&#160;if</var><var>$Target.Amount</var><text>&#160;</text><var>&gt;</var><text>&#160;</text><var>0</var></line>
+<line linenr="044" indent="&#160;&#160;"><text>return&#160;</text><var>0</var></line>
+<line linenr="045" indent="&#160;"><var>skip&#160;if</var><var>$Amount</var><text>&#160;</text><var>&lt;=</var><text>&#160;</text><var>$Target.Amount</var></line>
+<line linenr="046" indent="&#160;&#160;"><var>$Amount=</var><var>$Target.Amount</var></line>
+<line linenr="047" indent="&#160;"><var>$Sold=</var><var>$Target&#160;-&gt;</var><text>&#160;add&#160;</text><var>$Amount</var><text>&#160;units&#160;of&#160;</text><var>$Ware</var></line>
+<line linenr="048" indent="&#160;"><var>$Amount=</var><var>-</var><text>&#160;</text><var>$Sold</var></line>
+<line linenr="049" indent="&#160;"><var>=</var><var>[THIS]&#160;-&gt;</var><text>&#160;add&#160;</text><var>$Amount</var><text>&#160;units&#160;of&#160;</text><var>$Ware</var></line>
+<line linenr="050" indent="&#160;"><var>$Total=</var><var>$Sold</var><text>&#160;</text><var>*</var><text>&#160;</text><var>$Price</var></line>
+<line linenr="051" indent="&#160;"><var>[THIS]&#160;-&gt;</var><text>add&#160;money:&#160;</text><var>$Total</var></line>
+<line linenr="052" indent="&#160;"><var>$Total=</var><var>-</var><text>&#160;</text><var>$Total</var></line>
+<line linenr="053" indent="&#160;"><var>$Target&#160;-&gt;</var><text>add&#160;money:&#160;</text><var>$Total</var></line>
+<line linenr="054" indent="&#160;"><var>$Target&#160;-&gt;</var><text>send&#160;signal&#160;</text><var>SIGNAL_BUYWARE</var><text>&#160;:&#160;arg1=</text><var>[THIS]</var><text>,&#160;arg2=</text><var>$Ware</var><text>,&#160;arg3=</text><var>$Sold</var><text>,&#160;arg4=</text><var>$Price</var></line>
+<line linenr="055" indent="&#160;"><var>[THIS]&#160;-&gt;</var><text>send&#160;signal&#160;</text><var>SIGNAL_SELWARE</var><text>&#160;:&#160;arg1=</text><var>$Target</var><text>,&#160;arg2=</text><var>$Ware</var><text>,&#160;arg3=</text><var>$Sold</var><text>,&#160;arg4=</text><var>$Price</var></line>
+<line linenr="056" indent=""><text>end</text></line>
+<line linenr="057" indent=""><text>return&#160;</text><var>$Sold</var></line>
+</sourcetext>
+<codearray>
+
+<sval type="array" size="10">
+  <sval type="string" val="wwsl.util.unloadProduct"/>
+  <sval type="int" val="45"/>
+  <sval type="string" val="T2: Common - Sell/Unload/Transfer ware to"/>
+  <sval type="int" val="301"/>
+  <sval type="int" val="0"/>
+  <sval type="array" size="9">
+    <sval type="string" val="Ware"/>
+    <sval type="string" val="Amount"/>
+    <sval type="string" val="Target"/>
+    <sval type="string" val="Price"/>
+    <sval type="string" val="CargoAmount"/>
+    <sval type="string" val="tmp"/>
+    <sval type="string" val="Sold"/>
+    <sval type="string" val="Target.Amount"/>
+    <sval type="string" val="Total"/>
+  </sval>
+  <sval type="array" size="33">
+    <sval type="array" size="7">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-536870393"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="-1"/>
+    </sval>
+    <sval type="array" size="7">
+      <sval type="int" val="104"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="11"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="-1"/>
+    </sval>
+    <sval type="array" size="10">
+      <sval type="int" val="102"/>
+      <sval type="string" val="wwsl.T2.function1"/>
+      <sval type="int" val="-536869881"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="623"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="103"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="10">
+      <sval type="int" val="102"/>
+      <sval type="string" val="wwsl.T2.function1"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="609"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="13">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-536869113"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="-1"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="-2"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="103"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="13">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-536868601"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="-1"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="-2"/>
+    </sval>
+    <sval type="array" size="7">
+      <sval type="int" val="104"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="-1"/>
+    </sval>
+    <sval type="array" size="6">
+      <sval type="int" val="705"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="-1610608637"/>
+      <sval type="int" val="12"/>
+      <sval type="int" val="2016"/>
+    </sval>
+    <sval type="array" size="7">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-1610609149"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="-1"/>
+    </sval>
+    <sval type="array" size="6">
+      <sval type="int" val="627"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="5"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="13">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-536867321"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="5"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="-1"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="-2"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="103"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="8">
+      <sval type="int" val="603"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="112"/>
+      <sval type="int" val="32"/>
+    </sval>
+    <sval type="array" size="7">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-536866297"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="-1"/>
+    </sval>
+    <sval type="array" size="4">
+      <sval type="int" val="629"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="10">
+      <sval type="int" val="102"/>
+      <sval type="string" val="wwsl.T2.function1"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="613"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="13">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-536865529"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="-1"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="-2"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="103"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="13">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-536865017"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="5"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="-1"/>
+      <sval type="int" val="5"/>
+      <sval type="int" val="-2"/>
+    </sval>
+    <sval type="array" size="7">
+      <sval type="int" val="104"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="-1"/>
+    </sval>
+    <sval type="array" size="8">
+      <sval type="int" val="646"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="10">
+      <sval type="int" val="104"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="65555"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="65555"/>
+      <sval type="int" val="-1"/>
+    </sval>
+    <sval type="array" size="8">
+      <sval type="int" val="646"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="-2147483647"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="13">
+      <sval type="int" val="104"/>
+      <sval type="int" val="8"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="13"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="-1"/>
+      <sval type="int" val="13"/>
+      <sval type="int" val="-2"/>
+    </sval>
+    <sval type="array" size="5">
+      <sval type="int" val="661"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="8"/>
+    </sval>
+    <sval type="array" size="10">
+      <sval type="int" val="104"/>
+      <sval type="int" val="8"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="8"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="65555"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="65555"/>
+      <sval type="int" val="-1"/>
+    </sval>
+    <sval type="array" size="5">
+      <sval type="int" val="661"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="8"/>
+    </sval>
+    <sval type="array" size="13">
+      <sval type="int" val="515"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="18"/>
+      <sval type="int" val="1013"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="3"/>
+    </sval>
+    <sval type="array" size="13">
+      <sval type="int" val="515"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="18"/>
+      <sval type="int" val="1014"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="3"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="103"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="6"/>
+    </sval>
+  </sval>
+  <sval type="array" size="4">
+    <sval type="array" size="2">
+      <sval type="int" val="13"/>
+      <sval type="string" val="Ware"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="10"/>
+      <sval type="string" val="Amount"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="22"/>
+      <sval type="string" val="Target"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="10"/>
+      <sval type="string" val="Price"/>
+    </sval>
+  </sval>
+  <sval type="array" size="25">
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="Summary:"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="Sell or unload ware to contragent of any possible type:"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="station, ship docked at, remote ship."/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="The script must be used for all ware transfers from this ship."/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="This needed to provide signal generating for remote transfers."/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="0"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="Arguments:"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="$Ware - The ware to unload from cargo bay."/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="$Amount - Amount to be unloaded."/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="$Target - Station or ship to unload to (optional)."/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="   The main goal of the argument is to specify remote ship to transfer to."/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="   If target is a station, then additional check of equality with DOCKEDAT"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="   will be executed. If omitted, then DOCKEDAT will be used."/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="$Price - The min price to sell at station or fixed price for remote transfer."/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="   This parameter is optional. If not specified and target is a station, then"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="   station price will be used. If not specified and target is a ship, then"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="   then average price of ware will be used."/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="0"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="Returns:"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="Actual amount of ware sold."/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="0"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="9"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="14"/>
+      <sval type="int" val="4"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="16"/>
+      <sval type="int" val="5"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="32"/>
+      <sval type="int" val="4"/>
+    </sval>
+  </sval>
+  <sval type="int" val="0"/>
+</sval>
+
+</codearray>
+</script>

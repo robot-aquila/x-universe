@@ -1,0 +1,26 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>wwsl.util.getWareAmountPerc</name>
+<version>1002</version>
+<engineversion>33</engineversion>
+<description>Get ware amount in percents</description>
+<arguments>
+<argument index="1" name="Station" type="Var/Ship/Station" desc="Station" />
+<argument index="2" name="Ware" type="Var/Ware" desc="Ware" />
+<argument index="3" name="SumUpCargo" type="Var/Number" desc="Sum up amount in cargo" />
+</arguments>
+<sourcetext>
+<line linenr="001" indent=""><var>$StationMaxAmount&#160;=&#160;</var><var>$Station&#160;-&gt;</var><text>&#160;get&#160;max&#160;amount&#160;of&#160;ware&#160;</text><var>$Ware</var><text>&#160;that&#160;can&#160;be&#160;stored&#160;in&#160;cargo&#160;bay</text></line>
+<line linenr="002" indent=""><var>$CargoAmount&#160;=&#160;</var><var>0</var></line>
+<line linenr="003" indent=""><var>skip&#160;if&#160;not&#160;</var><var>$SumUpCargo</var></line>
+<line linenr="004" indent="&#160;"><var>$CargoAmount&#160;=&#160;</var><var>[THIS]&#160;-&gt;</var><text>&#160;get&#160;true&#160;amount&#160;of&#160;ware&#160;</text><var>$Ware</var><text>&#160;in&#160;cargo&#160;bay</text></line>
+<line linenr="005" indent=""><var>$StationAmount&#160;=&#160;</var><var>$Station&#160;-&gt;</var><text>&#160;get&#160;true&#160;amount&#160;of&#160;ware&#160;</text><var>$Ware</var><text>&#160;in&#160;cargo&#160;bay</text></line>
+<line linenr="006" indent=""><var>$TotalAmount&#160;=&#160;</var><var>$StationAmount</var><text>&#160;</text><var>+</var><text>&#160;</text><var>$CargoAmount</var></line>
+<line linenr="007" indent=""><var>$TotalAmountPerc&#160;=&#160;</var><var>$TotalAmount</var><text>&#160;</text><var>*</var><text>&#160;</text><var>100</var><text>&#160;</text><var>/</var><text>&#160;</text><var>$StationMaxAmount</var></line>
+<line linenr="008" indent=""><text>return&#160;</text><var>$TotalAmountPerc</var></line>
+</sourcetext>
+<codearray>
+<sval type="array" size="10"><sval type="string" val="wwsl.util.getWareAmountPerc" /><sval type="int" val="33" /><sval type="string" val="Get ware amount in percents" /><sval type="int" val="1002" /><sval type="int" val="0" /><sval type="array" size="8"><sval type="string" val="Station" /><sval type="string" val="Ware" /><sval type="string" val="SumUpCargo" /><sval type="string" val="StationMaxAmount" /><sval type="string" val="CargoAmount" /><sval type="string" val="StationAmount" /><sval type="string" val="TotalAmount" /><sval type="string" val="TotalAmountPerc" /></sval><sval type="array" size="8"><sval type="array" size="6"><sval type="int" val="621" /><sval type="int" val="131074" /><sval type="int" val="0" /><sval type="int" val="3" /><sval type="int" val="131074" /><sval type="int" val="1" /></sval><sval type="array" size="7"><sval type="int" val="104" /><sval type="int" val="4" /><sval type="int" val="1" /><sval type="int" val="4" /><sval type="int" val="0" /><sval type="int" val="1" /><sval type="int" val="-1" /></sval><sval type="array" size="7"><sval type="int" val="104" /><sval type="int" val="-1610611704" /><sval type="int" val="1" /><sval type="int" val="131074" /><sval type="int" val="2" /><sval type="int" val="1" /><sval type="int" val="-1" /></sval><sval type="array" size="6"><sval type="int" val="619" /><sval type="int" val="131075" /><sval type="int" val="1" /><sval type="int" val="4" /><sval type="int" val="131074" /><sval type="int" val="1" /></sval><sval type="array" size="6"><sval type="int" val="619" /><sval type="int" val="131074" /><sval type="int" val="0" /><sval type="int" val="5" /><sval type="int" val="131074" /><sval type="int" val="1" /></sval><sval type="array" size="13"><sval type="int" val="104" /><sval type="int" val="6" /><sval type="int" val="3" /><sval type="int" val="131074" /><sval type="int" val="5" /><sval type="int" val="131074" /><sval type="int" val="4" /><sval type="int" val="15" /><sval type="int" val="11" /><sval type="int" val="3" /><sval type="int" val="-1" /><sval type="int" val="11" /><sval type="int" val="-2" /></sval><sval type="array" size="19"><sval type="int" val="104" /><sval type="int" val="7" /><sval type="int" val="5" /><sval type="int" val="131074" /><sval type="int" val="6" /><sval type="int" val="4" /><sval type="int" val="100" /><sval type="int" val="15" /><sval type="int" val="13" /><sval type="int" val="131074" /><sval type="int" val="3" /><sval type="int" val="15" /><sval type="int" val="14" /><sval type="int" val="5" /><sval type="int" val="-1" /><sval type="int" val="13" /><sval type="int" val="-2" /><sval type="int" val="14" /><sval type="int" val="-4" /></sval><sval type="array" size="3"><sval type="int" val="103" /><sval type="int" val="131074" /><sval type="int" val="7" /></sval></sval><sval type="array" size="3"><sval type="array" size="2"><sval type="int" val="22" /><sval type="string" val="Station" /></sval><sval type="array" size="2"><sval type="int" val="13" /><sval type="string" val="Ware" /></sval><sval type="array" size="2"><sval type="int" val="10" /><sval type="string" val="Sum up amount in cargo" /></sval></sval><sval type="int" val="0" /><sval type="int" val="0" /></sval>
+</codearray>
+</script>

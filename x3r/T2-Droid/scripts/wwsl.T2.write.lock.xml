@@ -1,0 +1,18 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>wwsl.T2.write.lock</name>
+<version>1000</version>
+<engineversion>33</engineversion>
+<description>Lock for writing operation</description>
+<arguments>
+</arguments>
+<sourcetext>
+<line linenr="001" interruptable="@" indent=""><var>$vnLock&#160;=&#160;</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.getVarName</call><text>&#160;:&#160;</text><text>&#160;Variable&#160;suffix=</text><var>'T2.totalLock'</var></line>
+<line linenr="002" interruptable="@" indent=""><var>=&#160;</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.util.script.lock</call><text>&#160;:&#160;</text><text>&#160;Lock&#160;variables&#160;prefix=</text><var>$vnLock</var><text>&#160;</text><text>&#160;Timeout&#160;in&#160;seconds=</text><var>120</var></line>
+<line linenr="003" indent=""><text>return&#160;</text><var>[TRUE]</var></line>
+</sourcetext>
+<codearray>
+<sval type="array" size="10"><sval type="string" val="wwsl.T2.write.lock" /><sval type="int" val="33" /><sval type="string" val="Lock for writing operation" /><sval type="int" val="1000" /><sval type="int" val="0" /><sval type="array" size="1"><sval type="string" val="vnLock" /></sval><sval type="array" size="3"><sval type="array" size="8"><sval type="int" val="102" /><sval type="string" val="wwsl.T2.getVarName" /><sval type="int" val="0" /><sval type="int" val="131075" /><sval type="int" val="1" /><sval type="int" val="1" /><sval type="int" val="5" /><sval type="string" val="T2.totalLock" /></sval><sval type="array" size="10"><sval type="int" val="102" /><sval type="string" val="wwsl.util.script.lock" /><sval type="int" val="-2147483647" /><sval type="int" val="131075" /><sval type="int" val="1" /><sval type="int" val="2" /><sval type="int" val="131074" /><sval type="int" val="0" /><sval type="int" val="4" /><sval type="int" val="120" /></sval><sval type="array" size="3"><sval type="int" val="103" /><sval type="int" val="131075" /><sval type="int" val="10" /></sval></sval><sval type="int" val="0" /><sval type="int" val="0" /><sval type="int" val="0" /></sval>
+</codearray>
+</script>

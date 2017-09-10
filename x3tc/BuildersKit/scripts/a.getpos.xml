@@ -1,0 +1,166 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>a.getpos</name>
+<version>1</version>
+<engineversion>45</engineversion>
+<description>Get object position/orientation to logfile</description>
+<arguments>
+<argument index="1" name="pos" type="Перем/Корабль/Станция" desc="pos" />
+</arguments>
+<sourcetext>
+<line linenr="001" indent=""><var>$x=</var><var>$pos&#160;-&gt;</var><text>&#160;get&#160;x&#160;position</text></line>
+<line linenr="002" indent=""><var>$y=</var><var>$pos&#160;-&gt;</var><text>&#160;get&#160;y&#160;position</text></line>
+<line linenr="003" indent=""><var>$z=</var><var>$pos&#160;-&gt;</var><text>&#160;get&#160;z&#160;position</text></line>
+<line linenr="004" indent=""><var>$a=</var><var>$pos&#160;-&gt;</var><text>&#160;get&#160;rot&#160;alpha</text></line>
+<line linenr="005" indent=""><var>$b=</var><var>$pos&#160;-&gt;</var><text>&#160;get&#160;rot&#160;beta</text></line>
+<line linenr="006" indent=""><var>$g=</var><var>$pos&#160;-&gt;</var><text>&#160;get&#160;rot&#160;gamma</text></line>
+<line linenr="007" indent=""></line>
+<line linenr="008" indent=""><var>$text.pos=</var><text>sprintf:&#160;fmt=</text><var>'x=%s&#160;y=%s&#160;z=%s'</var><text>,&#160;</text><var>$x</var><text>,&#160;</text><var>$y</var><text>,&#160;</text><var>$z</var><text>,&#160;</text><var>null</var><text>,&#160;</text><var>null</var></line>
+<line linenr="009" indent=""><var>$text.orient=</var><text>sprintf:&#160;fmt=</text><var>'a=%s&#160;b=%s&#160;g=%s'</var><text>,&#160;</text><var>$a</var><text>,&#160;</text><var>$b</var><text>,&#160;</text><var>$g</var><text>,&#160;</text><var>null</var><text>,&#160;</text><var>null</var></line>
+<line linenr="010" indent=""><var>$pos.sector=</var><var>$pos&#160;-&gt;</var><text>&#160;get&#160;sector</text></line>
+<line linenr="011" indent=""><text>write&#160;to&#160;log&#160;file&#160;#</text><var>8370</var><text>&#160;&#160;append=</text><var>[TRUE]</var><text>&#160;&#160;printf:&#160;fmt=</text><var>'%s&#160;%s&#160;sector=[%s]&#160;object=[%s]'</var><text>,&#160;</text><var>$text.pos</var><text>,&#160;</text><var>$text.orient</var><text>,&#160;</text><var>$pos.sector</var><text>,&#160;</text><var>$pos</var><text>,&#160;</text><var>null</var></line>
+<line linenr="012" indent=""></line>
+<line linenr="013" indent=""><text>return&#160;</text><var>null</var></line>
+</sourcetext>
+<codearray>
+
+<sval type="array" size="10">
+  <sval type="string" val="a.getpos"/>
+  <sval type="int" val="45"/>
+  <sval type="string" val="Get object position/orientation to logfile"/>
+  <sval type="int" val="1"/>
+  <sval type="int" val="0"/>
+  <sval type="array" size="10">
+    <sval type="string" val="pos"/>
+    <sval type="string" val="x"/>
+    <sval type="string" val="y"/>
+    <sval type="string" val="z"/>
+    <sval type="string" val="a"/>
+    <sval type="string" val="b"/>
+    <sval type="string" val="g"/>
+    <sval type="string" val="text.pos"/>
+    <sval type="string" val="text.orient"/>
+    <sval type="string" val="pos.sector"/>
+  </sval>
+  <sval type="array" size="11">
+    <sval type="array" size="4">
+      <sval type="int" val="740"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="1"/>
+    </sval>
+    <sval type="array" size="4">
+      <sval type="int" val="741"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="4">
+      <sval type="int" val="742"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="3"/>
+    </sval>
+    <sval type="array" size="4">
+      <sval type="int" val="777"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="4"/>
+    </sval>
+    <sval type="array" size="4">
+      <sval type="int" val="778"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="5"/>
+    </sval>
+    <sval type="array" size="4">
+      <sval type="int" val="779"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="6"/>
+    </sval>
+    <sval type="array" size="14">
+      <sval type="int" val="149"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="5"/>
+      <sval type="string" val="x=%s y=%s z=%s"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="14">
+      <sval type="int" val="149"/>
+      <sval type="int" val="8"/>
+      <sval type="int" val="5"/>
+      <sval type="string" val="a=%s b=%s g=%s"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="5"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="4">
+      <sval type="int" val="703"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="9"/>
+    </sval>
+    <sval type="array" size="17">
+      <sval type="int" val="405"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="8370"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="10"/>
+      <sval type="int" val="5"/>
+      <sval type="string" val="%s %s sector=[%s] object=[%s]"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="8"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="9"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="103"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+  </sval>
+  <sval type="array" size="1">
+    <sval type="array" size="2">
+      <sval type="int" val="22"/>
+      <sval type="string" val="pos"/>
+    </sval>
+  </sval>
+  <sval type="array" size="2">
+    <sval type="array" size="2">
+      <sval type="int" val="6"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="10"/>
+      <sval type="int" val="2"/>
+    </sval>
+  </sval>
+  <sval type="int" val="0"/>
+</sval>
+
+</codearray>
+</script>

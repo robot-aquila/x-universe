@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>wwsl.T2.nav.undock</name>
+<version>1000</version>
+<engineversion>33</engineversion>
+<description>Undock</description>
+<arguments>
+<argument index="1" name="Destination" type="Value" desc="Destination" />
+</arguments>
+<sourcetext>
+<line linenr="001" indent=""><var>while&#160;</var><var>[THIS]&#160;-&gt;</var><text>&#160;is&#160;docked</text></line>
+<line linenr="002" interruptable="@" indent="&#160;"><var>=&#160;</var><var>[THIS]&#160;-&gt;</var><text>&#160;fly&#160;to&#160;sector&#160;</text><var>[SECTOR]</var></line>
+<line linenr="003" interruptable="@" indent="&#160;"><var>=&#160;</var><text>wait&#160;randomly&#160;from&#160;</text><var>200</var><text>&#160;to&#160;</text><var>400</var><text>&#160;ms</text></line>
+<line linenr="004" indent=""><text>end</text></line>
+<line linenr="005" indent=""><text>return&#160;</text><var>null</var></line>
+</sourcetext>
+<codearray>
+<sval type="array" size="10"><sval type="string" val="wwsl.T2.nav.undock" /><sval type="int" val="33" /><sval type="string" val="Undock" /><sval type="int" val="1000" /><sval type="int" val="0" /><sval type="array" size="1"><sval type="string" val="Destination" /></sval><sval type="array" size="5"><sval type="array" size="4"><sval type="int" val="745" /><sval type="int" val="131075" /><sval type="int" val="1" /><sval type="int" val="-1610611703" /></sval><sval type="array" size="6"><sval type="int" val="502" /><sval type="int" val="131075" /><sval type="int" val="1" /><sval type="int" val="-2147483647" /><sval type="int" val="131075" /><sval type="int" val="6" /></sval><sval type="array" size="6"><sval type="int" val="107" /><sval type="int" val="-2147483647" /><sval type="int" val="4" /><sval type="int" val="200" /><sval type="int" val="4" /><sval type="int" val="400" /></sval><sval type="array" size="2"><sval type="int" val="112" /><sval type="int" val="0" /></sval><sval type="array" size="3"><sval type="int" val="103" /><sval type="int" val="0" /><sval type="int" val="0" /></sval></sval><sval type="array" size="1"><sval type="array" size="2"><sval type="int" val="9" /><sval type="string" val="Destination" /></sval></sval><sval type="array" size="1"><sval type="array" size="2"><sval type="int" val="4" /><sval type="int" val="4" /></sval></sval><sval type="int" val="0" /></sval>
+</codearray>
+</script>

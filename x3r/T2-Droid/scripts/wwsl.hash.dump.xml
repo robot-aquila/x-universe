@@ -1,0 +1,37 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>wwsl.hash.dump</name>
+<version>1000</version>
+<engineversion>33</engineversion>
+<description>Test</description>
+<arguments>
+<argument index="1" name="hash" type="Value" desc="Hash to dump" />
+</arguments>
+<sourcetext>
+<line linenr="001" indent=""><var>$pageId&#160;=&#160;</var><var>8377</var></line>
+<line linenr="002" indent=""><text>load&#160;text:&#160;id=</text><var>$pageId</var></line>
+<line linenr="003" indent=""></line>
+<line linenr="004" indent=""><var>$text&#160;=&#160;</var><var>'&#160;'</var></line>
+<line linenr="005" indent=""><var>$keys&#160;=&#160;</var><var>$hash</var><text>[</text><var>0</var><text>]</text></line>
+<line linenr="006" indent=""><var>$values&#160;=&#160;</var><var>$hash</var><text>[</text><var>1</var><text>]</text></line>
+<line linenr="007" indent=""></line>
+<line linenr="008" indent=""><var>$size&#160;=&#160;</var><text>&#160;size&#160;of&#160;array&#160;</text><var>$keys</var></line>
+<line linenr="009" indent=""><var>$index&#160;=&#160;</var><var>0</var></line>
+<line linenr="010" indent=""><var>while&#160;</var><var>$index</var><text>&#160;</text><var>&lt;</var><text>&#160;</text><var>$size</var></line>
+<line linenr="011" indent="&#160;"><var>$k&#160;=&#160;</var><var>$keys</var><text>[</text><var>$index</var><text>]</text></line>
+<line linenr="012" indent="&#160;"><var>$v&#160;=&#160;</var><var>$values</var><text>[</text><var>$index</var><text>]</text></line>
+<line linenr="013" indent="&#160;"></line>
+<line linenr="014" indent="&#160;"><var>$t&#160;=&#160;</var><text>sprintf:&#160;pageid=</text><var>$pageId</var><text>&#160;textid=</text><var>2</var><text>,&#160;</text><var>$k</var><text>,&#160;</text><var>$v</var><text>,&#160;</text><var>null</var><text>,&#160;</text><var>null</var><text>,&#160;</text><var>null</var></line>
+<line linenr="015" indent="&#160;"><var>$text&#160;=&#160;</var><var>$text</var><text>&#160;</text><var>+</var><text>&#160;</text><var>$t</var></line>
+<line linenr="016" indent="&#160;"></line>
+<line linenr="017" indent="&#160;"><text>inc&#160;</text><var>$index&#160;=&#160;</var></line>
+<line linenr="018" indent=""><text>end</text></line>
+<line linenr="019" indent=""></line>
+<line linenr="020" indent=""><text>write&#160;to&#160;player&#160;logbook&#160;</text><var>$text</var></line>
+<line linenr="021" indent=""><text>return&#160;</text><var>null</var></line>
+</sourcetext>
+<codearray>
+<sval type="array" size="10"><sval type="string" val="wwsl.hash.dump" /><sval type="int" val="33" /><sval type="string" val="Test" /><sval type="int" val="1000" /><sval type="int" val="0" /><sval type="array" size="10"><sval type="string" val="hash" /><sval type="string" val="pageId" /><sval type="string" val="text" /><sval type="string" val="keys" /><sval type="string" val="values" /><sval type="string" val="size" /><sval type="string" val="index" /><sval type="string" val="k" /><sval type="string" val="v" /><sval type="string" val="t" /></sval><sval type="array" size="16"><sval type="array" size="7"><sval type="int" val="104" /><sval type="int" val="1" /><sval type="int" val="1" /><sval type="int" val="4" /><sval type="int" val="8377" /><sval type="int" val="1" /><sval type="int" val="-1" /></sval><sval type="array" size="3"><sval type="int" val="151" /><sval type="int" val="131074" /><sval type="int" val="1" /></sval><sval type="array" size="7"><sval type="int" val="104" /><sval type="int" val="2" /><sval type="int" val="1" /><sval type="int" val="5" /><sval type="string" val=" " /><sval type="int" val="1" /><sval type="int" val="-1" /></sval><sval type="array" size="6"><sval type="int" val="129" /><sval type="int" val="3" /><sval type="int" val="131074" /><sval type="int" val="0" /><sval type="int" val="4" /><sval type="int" val="0" /></sval><sval type="array" size="6"><sval type="int" val="129" /><sval type="int" val="4" /><sval type="int" val="131074" /><sval type="int" val="0" /><sval type="int" val="4" /><sval type="int" val="1" /></sval><sval type="array" size="4"><sval type="int" val="131" /><sval type="int" val="5" /><sval type="int" val="131074" /><sval type="int" val="3" /></sval><sval type="array" size="7"><sval type="int" val="104" /><sval type="int" val="6" /><sval type="int" val="1" /><sval type="int" val="4" /><sval type="int" val="0" /><sval type="int" val="1" /><sval type="int" val="-1" /></sval><sval type="array" size="13"><sval type="int" val="104" /><sval type="int" val="-1610609143" /><sval type="int" val="3" /><sval type="int" val="131074" /><sval type="int" val="6" /><sval type="int" val="131074" /><sval type="int" val="5" /><sval type="int" val="15" /><sval type="int" val="3" /><sval type="int" val="3" /><sval type="int" val="-1" /><sval type="int" val="3" /><sval type="int" val="-2" /></sval><sval type="array" size="6"><sval type="int" val="129" /><sval type="int" val="7" /><sval type="int" val="131074" /><sval type="int" val="3" /><sval type="int" val="131074" /><sval type="int" val="6" /></sval><sval type="array" size="6"><sval type="int" val="129" /><sval type="int" val="8" /><sval type="int" val="131074" /><sval type="int" val="4" /><sval type="int" val="131074" /><sval type="int" val="6" /></sval><sval type="array" size="16"><sval type="int" val="150" /><sval type="int" val="9" /><sval type="int" val="131074" /><sval type="int" val="1" /><sval type="int" val="4" /><sval type="int" val="2" /><sval type="int" val="131074" /><sval type="int" val="7" /><sval type="int" val="131074" /><sval type="int" val="8" /><sval type="int" val="0" /><sval type="int" val="0" /><sval type="int" val="0" /><sval type="int" val="0" /><sval type="int" val="0" /><sval type="int" val="0" /></sval><sval type="array" size="13"><sval type="int" val="104" /><sval type="int" val="2" /><sval type="int" val="3" /><sval type="int" val="131074" /><sval type="int" val="2" /><sval type="int" val="131074" /><sval type="int" val="9" /><sval type="int" val="15" /><sval type="int" val="11" /><sval type="int" val="3" /><sval type="int" val="-1" /><sval type="int" val="11" /><sval type="int" val="-2" /></sval><sval type="array" size="2"><sval type="int" val="142" /><sval type="int" val="6" /></sval><sval type="array" size="2"><sval type="int" val="112" /><sval type="int" val="7" /></sval><sval type="array" size="3"><sval type="int" val="400" /><sval type="int" val="131074" /><sval type="int" val="2" /></sval><sval type="array" size="3"><sval type="int" val="103" /><sval type="int" val="0" /><sval type="int" val="0" /></sval></sval><sval type="array" size="1"><sval type="array" size="2"><sval type="int" val="9" /><sval type="string" val="Hash to dump" /></sval></sval><sval type="array" size="6"><sval type="array" size="2"><sval type="int" val="2" /><sval type="int" val="2" /></sval><sval type="array" size="2"><sval type="int" val="5" /><sval type="int" val="2" /></sval><sval type="array" size="2"><sval type="int" val="10" /><sval type="int" val="2" /></sval><sval type="array" size="2"><sval type="int" val="12" /><sval type="int" val="2" /></sval><sval type="array" size="2"><sval type="int" val="14" /><sval type="int" val="4" /></sval><sval type="array" size="2"><sval type="int" val="14" /><sval type="int" val="2" /></sval></sval><sval type="int" val="0" /></sval>
+</codearray>
+</script>

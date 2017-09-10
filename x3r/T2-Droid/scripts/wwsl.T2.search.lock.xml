@@ -1,0 +1,20 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>wwsl.T2.search.lock</name>
+<version>1000</version>
+<engineversion>33</engineversion>
+<description>Lock search operations</description>
+<arguments>
+<argument index="1" name="ware" type="Var/Ware" desc="Search ware" />
+<argument index="2" name="operation" type="Var/Number" desc="0 - for buying, 1 - for selling" />
+</arguments>
+<sourcetext>
+<line linenr="001" interruptable="@" indent=""><var>$vnLock&#160;=&#160;</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.getVarName</call><text>&#160;:&#160;</text><text>&#160;Variable&#160;suffix=</text><var>'T2.search'</var></line>
+<line linenr="002" interruptable="@" indent=""><var>$result&#160;=&#160;</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.util.script.lock.fifo</call><text>&#160;:&#160;</text><text>&#160;Lock&#160;variables&#160;prefix=</text><var>$vnLock</var><text>&#160;</text><text>&#160;Timeout&#160;in&#160;seconds=</text><var>900</var></line>
+<line linenr="003" indent=""><text>return&#160;</text><var>$result</var></line>
+</sourcetext>
+<codearray>
+<sval type="array" size="10"><sval type="string" val="wwsl.T2.search.lock" /><sval type="int" val="33" /><sval type="string" val="Lock search operations" /><sval type="int" val="1000" /><sval type="int" val="0" /><sval type="array" size="4"><sval type="string" val="ware" /><sval type="string" val="operation" /><sval type="string" val="vnLock" /><sval type="string" val="result" /></sval><sval type="array" size="3"><sval type="array" size="8"><sval type="int" val="102" /><sval type="string" val="wwsl.T2.getVarName" /><sval type="int" val="2" /><sval type="int" val="131075" /><sval type="int" val="1" /><sval type="int" val="1" /><sval type="int" val="5" /><sval type="string" val="T2.search" /></sval><sval type="array" size="10"><sval type="int" val="102" /><sval type="string" val="wwsl.util.script.lock.fifo" /><sval type="int" val="3" /><sval type="int" val="131075" /><sval type="int" val="1" /><sval type="int" val="2" /><sval type="int" val="131074" /><sval type="int" val="2" /><sval type="int" val="4" /><sval type="int" val="900" /></sval><sval type="array" size="3"><sval type="int" val="103" /><sval type="int" val="131074" /><sval type="int" val="3" /></sval></sval><sval type="array" size="2"><sval type="array" size="2"><sval type="int" val="13" /><sval type="string" val="Search ware" /></sval><sval type="array" size="2"><sval type="int" val="10" /><sval type="string" val="0 - for buying, 1 - for selling" /></sval></sval><sval type="int" val="0" /><sval type="int" val="0" /></sval>
+</codearray>
+</script>

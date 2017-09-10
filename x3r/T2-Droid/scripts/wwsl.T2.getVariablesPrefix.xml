@@ -1,0 +1,16 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>wwsl.T2.getVariablesPrefix</name>
+<version>1</version>
+<engineversion>32</engineversion>
+<description>Get local variables prefix</description>
+<arguments>
+</arguments>
+<sourcetext>
+<line linenr="001" indent=""><text>return&#160;</text><var>'wwsl.T2.'</var></line>
+</sourcetext>
+<codearray>
+<sval type="array" size="10"><sval type="string" val="wwsl.T2.getVariablesPrefix" /><sval type="int" val="32" /><sval type="string" val="Get local variables prefix" /><sval type="int" val="1" /><sval type="int" val="0" /><sval type="int" val="0" /><sval type="array" size="1"><sval type="array" size="3"><sval type="int" val="103" /><sval type="int" val="5" /><sval type="string" val="wwsl.T2." /></sval></sval><sval type="int" val="0" /><sval type="int" val="0" /><sval type="int" val="0" /></sval>
+</codearray>
+</script>

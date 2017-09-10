@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language id="7">
+
+<page id="7047">
+ <t id="9909"> This ID is queried to determine if the TFile is present and readable by X3 : </t>
+ <t id="6422101">MARS</t>
+
+ <t id="9909"> This LINE is displayed on the MARS Menu (config) so the user can
+ 				  confirm that the RIGHT TFile has been loaded and whodunit. </t>
+ <t id="6422102">(5 spaces for formatting)     Xtended Terran Conflict v.1.1   \(Gazz\)</t>
+
+<t id="9909">-------------------------------------------------------</t>
+<t id="9909"> MARS FIRE CONTROL  </t>
+<t id="9909">-------------------------------------------------------</t>
+<t id="9910"> USER CONFIGURABLE OPTIONS </t>
+<t id="9910"> MARS *automatically* skips indices that do not exist in the text file,
+              not overwriting internal values. </t>
+
+<t id="20130"> Safety range for AREA laser usage </t>
+<t id="20131">3800</t>
+
+<t id="20160"> Cap mode: enable (1 or 0) </t>
+<t id="20161">1</t>
+<t id="20140"> Cap mode: pause duration in seconds </t>
+<t id="20141">7</t>
+<t id="20460"> Cap mode: smooth laser adjustment </t>
+<t id="20461">1</t>
+
+<t id="20150"> Turret burst length in sec </t>
+<t id="20151">2</t>
+
+<t id="20170"> ----- </t>
+<t id="20171">0</t>
+
+<t id="20190"> Priority bonus value in % : Attack target of MARS ship </t>
+<t id="20191">20</t>
+
+<t id="20200"> Priority bonus value in %: Attack target of Wing Leader </t>
+<t id="20201">25</t>
+
+<t id="20210"> Priority bonus value in %: Player's target </t>
+<t id="20211">30</t>
+
+<t id="20220"> MAXIMUM hit-envelope of all lasers. </t>
+<t id="20220"> Lower numbers = they generally need a better aim before being allowed to fire.</t>
+<t id="20220"> Higher numbers = Lasers waste more energy... </t>
+<t id="20220"> Default = 300 </t>
+<t id="20221">300</t>
+
+<t id="20230"> Priority bonus for being able to do hull damage. </t>
+<t id="20230"> Stripping the shields off 6 ships does... a whole lotta nothing. </t>
+<t id="20230"> Default = 50  </t>
+<t id="20231">50</t>
+
+<t id="20240"> Goblin zig-zag angle in m / 1000 m distance </t>
+<t id="20241">300</t>
+<t id="20250"> Max Nr of active goblins for all ships </t>
+<t id="20250"> Ships use an additional 50 % extra for missile defense only. </t>
+<t id="20251">4</t>
+<t id="20260"> Max Nr of active goblins for huge ship </t>
+<t id="20261">6</t>
+<t id="20270"> Goblin keeps this distance when hiding behind a ship: </t>
+<t id="20271">2000</t>
+<t id="20290"> MARS automatic Goblin deployment paused for x seconds when player calls RTB. </t>
+<t id="20291">600</t>
+
+<t id="20300"> Goblins can attack little ships. </t>
+<t id="20301">1</t>
+<t id="20310"> Goblins can attack big ships. (M6, M7) </t>
+<t id="20311">1</t>
+<t id="20320"> Goblins can attack huge ships. (TL, M2) </t>
+<t id="20321">1</t>
+
+<t id="20330"> TL / TP / TS class ships automatically collect the cargo Goblins bring to them. </t>
+<t id="20331">1</t>
+<t id="20340"> M3/4/5 class ships automatically collect the cargo Goblins bring to them. </t>
+<t id="20341">1</t>
+<t id="20350"> M1/2/6/7 class ships automatically collect the cargo Goblins bring to them. </t>
+<t id="20351">1</t>
+
+<t id="20360"> *experimental* Target lead prediction v2 (X3 v2.5 required) </t>
+<t id="20361">0</t>
+
+<t id="20370"> Hotkey Cease Fire duration in seconds </t>
+<t id="20371">120</t>
+
+<t id="20390"> MARS Defense: Top priority given to missiles if their damage </t>
+<t id="20390"> is greater than (current shields / x ) </t>
+<t id="20391">4</t>
+<t id="20400"> MARS Offense: Top priority given to missiles if their damage </t>
+<t id="20400"> is greater than (current shields / x ) </t>
+<t id="20401">4</t>
+
+<t id="20410"> Completely ignore this Laser (1): Maybe it's bugged, maybe you just don't like it... </t>
+<t id="20410"> (Enter full name of the Ware in game.) </t>
+<t id="20411">x</t>
+<t id="20420"> Completely ignore this Laser (2): </t>
+<t id="20421">x</t>
+<t id="20430"> Completely ignore this Laser (3):  </t>
+<t id="20431">x</t>
+
+<t id="20460"> USED (above)</t>
+
+<t id="20470"> x ms break after every salvo fired. </t>
+<t id="20470"> MARS becomes LESS effective but if you like the cinematic effect... I suggest 1500+ and increasing "Turret burst length" to 3. </t>
+<t id="20471">0</t>
+
+<t id="20480"> Goblin estimated fuel reserve in seconds of flight time. </t>
+<t id="20480"> Ensures they get home safely.</t>
+<t id="20481">60</t>
+
+<t id="20490"> Self service: Display pop up message when changing the ware amounts. ( 0 / 1 )</t>
+<t id="20491">1</t>
+
+<t id="20800"> Goblin missile defense: Engagement range in m from the mothership. </t>
+<t id="20800"> non-Big Ship use 2/3 of this value. </t>
+<t id="20801">20000</t>
+
+<t id="20380"> MARS Light (small ships) : weapon switching / changing enabled</t>
+<t id="20381">0</t>
+<t id="20810"> MARS Regular (big ships) : weapon switching / changing enabled</t>
+<t id="20811">1</t>
+
+<t id="21090"> Drones only repair a percentage of damage done:</t>
+<t id="21091">66</t>
+
+
+<t id="9910">-------------------------------------------------------</t>
+<t id="9911"> LASER DATA  XTM </t>
+<t id="9910">-------------------------------------------------------</t>
+
+<t id="9880">The first 2 digits of 't id' are the INDEX of the Laser like you see it with the X3 editor in TLasers.</t>
+
+<t id="9890">00= name (irrelevant but easier to read) </t>
+<t id="9890">01= Shield Damage / second</t>
+<t id="9890">02= Hull Damage / second  </t>
+<t id="9895">03= is PSG: 1,  is Flamer: 2,  is other AOE weapon like Clusterf**k: 3,  is Flak: 4 </t>
+<t id="9896">04= Min ship size (m) to be attacked with this laser.</t>
+<t id="9897">05= Max ship size (m)</t>
+<t id="9897">    Size being what the script engine reports on a 'get ship size'.</t>
+
+<t id="9912">-------------------------------------------------------</t>
+<t id="9912">--  Do not bother translating the actual laser data.
+This data is created by an automatic export and would just be overwritten again. --</t>
+
+<t id="0">  Impulse Ray Emitter  </t><t id="1">  500  </t><t id="2">  120  </t><!-- testing -->
+<t id="3">  0  </t><t id="4">  0  </t><t id="5">  50  </t>
+
+<t id="10">  Particle Accelerator Cannon  </t><t id="11">  826  </t><t id="12">  153  </t><!-- testing -->
+<t id="13">  0  </t><t id="14">  0  </t><t id="15">  50  </t>
+
+<t id="20">  Mass Driver  </t><t id="21">  152  </t><t id="22">  52  </t><!-- testing -->
+<t id="23">  0  </t><t id="24">  0  </t><t id="25">  3000  </t>
+
+<t id="30">  Phased Repeater Gun  </t><t id="31">  9766  </t><t id="32">  935  </t>
+<t id="33">  0  </t><t id="34">  0  </t><t id="35">  250  </t>
+
+<t id="40">  Energy Flechette  </t><t id="41">  9042  </t><t id="42">  1542  </t>
+<t id="43">  0  </t><t id="44">  15  </t><t id="45">  240  </t>
+
+<t id="50">  Fragmentation Bomb Launcher  </t><t id="51">  9333  </t><t id="52">  3733  </t>
+<t id="53">  0  </t><t id="54">  18  </t><t id="55">  300  </t>
+
+<t id="60">  High Energy Plasma Thrower  </t><t id="61">  9433  </t><t id="62">  1566  </t>
+<t id="63">  0  </t><t id="64">  18  </t><t id="65">  250  </t>
+
+<t id="70">  Ion Disruptor  </t><t id="71">  6400  </t><t id="72">  4  </t>
+<t id="73">  3  </t><t id="74">  0  </t><t id="75">  50  </t>
+
+<t id="80">  Pulsed Beam Emitter  </t><t id="81">  5666  </t><t id="82">  500  </t>
+<t id="83">  0  </t><t id="84">  0  </t><t id="85">  50  </t>
+
+<t id="90">  Plasma Burst Generator  </t><t id="91">  3000  </t><t id="92">  800  </t>
+<t id="93">  2  </t><t id="94">  0  </t><t id="95">  900000  </t>
+
+<t id="100">  Alpha Electro-Magnetic Plasma Cannon  </t><t id="101">  3000  </t><t id="102">  1506  </t>
+<t id="103">  0  </t><t id="104">  16  </t><t id="105">  200  </t>
+
+<t id="110">  Concussion Impulse Generator  </t><t id="111">  9806  </t><t id="112">  3268  </t>
+<t id="113">  0  </t><t id="114">  10  </t><t id="115">  3000  </t>
+
+<t id="120">  Ion Pulse Generator  </t><t id="121">  10583  </t><t id="122">  416  </t>
+<t id="123">  0  </t><t id="124">  25  </t><t id="125">  250  </t>
+
+<t id="130">  Ion Shard Railgun  </t><t id="131">  22100  </t><t id="132">  3900  </t>
+<t id="133">  0  </t><t id="134">  17  </t><t id="135">  1000  </t>
+
+<t id="140">  Matter/Anti-Matter Launcher  </t><t id="141">  19266  </t><t id="142">  7155  </t>
+<t id="143">  0  </t><t id="144">  27  </t><t id="145">  1000  </t>
+
+<t id="150">  Alpha Flak  </t><t id="151">  9699  </t><t id="152">  1574  </t>
+<t id="153">  4  </t><t id="154">  0  </t><t id="155">  250  </t>
+
+<t id="160">  Beta Flak  </t><t id="161">  19398  </t><t id="162">  3148  </t>
+<t id="163">  3  </t><t id="164">  0  </t><t id="165">  1000  </t>
+
+<t id="170">  Meson Blaster  </t><t id="171">  9137  </t><t id="172">  1725  </t>
+<t id="173">  0  </t><t id="174">  18  </t><t id="175">  250  </t>
+
+<t id="180">  Phased Shockwave Generator  </t><t id="181">  2534  </t><t id="182">  134  </t>
+<t id="183">  1  </t><t id="184">  0  </t><t id="185">  900000  </t>
+
+<t id="190">  Starburst Shockwave Cannon  </t><t id="191">  9065  </t><t id="192">  2209  </t>
+<t id="193">  4  </t><t id="194">  0  </t><t id="195">  250  </t>
+
+<t id="200">  Photon Pulse Cannon  </t><t id="201">  48034  </t><t id="202">  8412  </t>
+<t id="203">  0  </t><t id="204">  60  </t><t id="205">  900000  </t>
+
+<t id="210">  Ion Cannon  </t><t id="211">  53000  </t><t id="212">  3400  </t>
+<t id="213">  0  </t><t id="214">  40  </t><t id="215">  900000  </t>
+
+<t id="220">  Gauss Cannon  </t><t id="221">  37974  </t><t id="222">  18987  </t>
+<t id="223">  0  </t><t id="224">  40  </t><t id="225">  900000  </t>
+
+<t id="230">  Incendiary Bomb Launcher  </t><t id="231">  20164  </t><t id="232">  5774  </t>
+<t id="233">  0  </t><t id="234">  35  </t><t id="235">  1000  </t>
+
+<t id="240">  Point Singularity Projector  </t><t id="241">  38165  </t><t id="242">  18348  </t>
+<t id="243">  0  </t><t id="244">  60  </t><t id="245">  900000  </t>
+
+<t id="250">  Lasertower Weapon  </t><t id="251">  18007  </t><t id="252">  7202  </t>
+<t id="253">  0  </t><t id="254">  0  </t><t id="255">  1000  </t>
+
+<t id="260">  Proton Burst Cannon  </t><t id="261">  8527  </t><t id="262">  4301  </t>
+<t id="263">  0  </t><t id="264">  16  </t><t id="265">  300  </t>
+
+<t id="270">  Beta Electro-Magnetic Plasma Cannon  </t><t id="271">  4712  </t><t id="272">  7853  </t>
+<t id="273">  0  </t><t id="274">  16  </t><t id="275">  200  </t>
+
+<t id="280">  Mobile Drilling System  </t>
+
+<t id="290">  Tractor Beam  </t>
+
+<t id="300">  Pulse Disruptor  </t><t id="301">  9160  </t><t id="302">  1832  </t>
+<t id="303">  0  </t><t id="304">  20  </t><t id="305">  250  </t>
+
+<t id="310">  Alpha Neutron Gun  </t><t id="311">  6000  </t><t id="312">  750  </t>
+<t id="313">  0  </t><t id="314">  16  </t><t id="315">  50  </t>
+
+<t id="320">  alpha kyon  </t><t id="321">  2333  </t><t id="322">  1166  </t>
+<t id="323">  0  </t><t id="324">  0  </t><t id="325">  250  </t>
+
+<t id="330">  Alpha Kyon Emitter  </t><t id="331">  2333  </t><t id="332">  1166  </t>
+<t id="333">  0  </t><t id="334">  0  </t><t id="335">  250  </t>
+
+<t id="340">  Beta Neutron Gun  </t><t id="341">  9359  </t><t id="342">  1635  </t>
+<t id="343">  0  </t><t id="344">  18  </t><t id="345">  250  </t>
+
+<t id="350">  Repair Laser  </t>
+
+<t id="360">  beta kyon  </t><t id="361">  7507  </t><t id="362">  4504  </t>
+<t id="363">  0  </t><t id="364">  0  </t><t id="365">  400  </t>
+
+<t id="370">  Beta Kyon Emitter  </t><t id="371">  7507  </t><t id="372">  4504  </t>
+<t id="373">  0  </t><t id="374">  0  </t><t id="375">  400  </t>
+
+<t id="380">  Heavy Mass Driver  </t><t id="381">  586  </t><t id="382">  261  </t>
+<t id="383">  0  </t><t id="384">  10  </t><t id="385">  900000  </t>
+
+<t id="390">  Heavy Ion Disruptor  </t><t id="391">  12293  </t><t id="392">  899  </t>
+<t id="393">  3  </t><t id="394">  0  </t><t id="395">  300  </t>
+
+<t id="400">  Photon Maser Cannon  </t><t id="401">  8721  </t><t id="402">  4360  </t>
+<t id="403">  0  </t><t id="404">  40  </t><t id="405">  250  </t>
+
+<t id="410">  Ion Beam Cannon  </t><t id="411">  4310  </t><t id="412">  1466  </t>
+<t id="413">  0  </t><t id="414">  0  </t><t id="415">  50  </t>
+
+<t id="420">  Scram Cannon  </t><t id="421">  8065  </t><t id="422">  5000  </t>
+<t id="423">  0  </t><t id="424">  17  </t><t id="425">  250  </t>
+
+<t id="430">  Bolt Autocannon  </t><t id="431">  10416  </t><t id="432">  2583  </t>
+<t id="433">  0  </t><t id="434">  30  </t><t id="435">  250  </t>
+
+<t id="440">  Gamma Electro-Magnetic Plasma Cannon  </t><t id="441">  8719  </t><t id="442">  4354  </t>
+<t id="443">  0  </t><t id="444">  60  </t><t id="445">  300  </t>
+
+<t id="450">  Neutron Pulse Generator  </t><t id="451">  9334  </t><t id="452">  3734  </t>
+<t id="453">  0  </t><t id="454">  18  </t><t id="455">  300  </t>
+
+<t id="460">  Polaron Emitter  </t><t id="461">  8809  </t><t id="462">  2567  </t>
+<t id="463">  0  </t><t id="464">  0  </t><t id="465">  500  </t>
+
+<t id="470">  Tachyon Cannon  </t><t id="471">  18634  </t><t id="472">  7475  </t>
+<t id="473">  0  </t><t id="474">  30  </t><t id="475">  1000  </t>
+
+<t id="480">  Tetryon Pulse Launcher  </t><t id="481">  19400  </t><t id="482">  6693  </t>
+<t id="483">  0  </t><t id="484">  30  </t><t id="485">  1000  </t>
+
+<t id="490">  Phase Missile Launcher  </t><t id="491">  21380  </t><t id="492">  4726  </t>
+<t id="493">  0  </t><t id="494">  35  </t><t id="495">  1000  </t>
+
+<t id="500">  Meteor Cannon  </t><t id="501">  23000  </t><t id="502">  3100  </t>
+<t id="503">  0  </t><t id="504">  30  </t><t id="505">  1000  </t>
+
+<t id="510">  Bolt Railgun  </t><t id="511">  18000  </t><t id="512">  8100  </t>
+<t id="513">  0  </t><t id="514">  20  </t><t id="515">  1000  </t>
+
+<t id="520">  Polaron Pulse Launcher  </t><t id="521">  21539  </t><t id="522">  4537  </t>
+<t id="523">  0  </t><t id="524">  35  </t><t id="525">  1000  </t>
+
+<t id="530">  gamma kyon  </t><t id="531">  5000  </t><t id="532">  2857  </t>
+<t id="533">  0  </t><t id="534">  0  </t><t id="535">  900000  </t>
+
+<t id="540">  Gamma Kyon Emitter  </t><t id="541">  5000  </t><t id="542">  2857  </t>
+<t id="543">  0  </t><t id="544">  0  </t><t id="545">  900000  </t>
+
+<t id="550">  Positron Cannon  </t><t id="551">  42400  </t><t id="552">  14100  </t>
+<t id="553">  0  </t><t id="554">  60  </t><t id="555">  900000  </t>
+
+<t id="560">  Trans-Phase Cannon  </t><t id="561">  37922  </t><t id="562">  19253  </t>
+<t id="563">  0  </t><t id="564">  65  </t><t id="565">  900000  </t>
+
+<t id="570">  Anti-Proton Cannon  </t><t id="571">  39873  </t><t id="572">  16613  </t>
+<t id="573">  0  </t><t id="574">  20  </t><t id="575">  900000  </t>
+
+<t id="580">  Nova Cannon  </t><t id="581">  48862  </t><t id="582">  7583  </t>
+<t id="583">  0  </t><t id="584">  50  </t><t id="585">  900000  </t>
+
+<t id="590">  delta kyon  </t><t id="591">  10373  </t><t id="592">  6224  </t>
+<t id="593">  0  </t><t id="594">  0  </t><t id="595">  900000  </t>
+
+<t id="600">  Delta Kyon Emitter  </t><t id="601">  10373  </t><t id="602">  6224  </t>
+<t id="603">  0  </t><t id="604">  0  </t><t id="605">  900000  </t>
+
+<t id="610">  Dragon Breath S  </t><t id="611">  50  </t><t id="612">  20  </t>
+<t id="613">  1  </t><t id="614">  0  </t><t id="615">  900000  </t>
+
+<t id="620">  Dragon Breath M  </t><t id="621">  100  </t><t id="622">  40  </t>
+<t id="623">  1  </t><t id="624">  0  </t><t id="625">  900000  </t>
+
+<t id="630">  Dragon Breath L  </t><t id="631">  220  </t><t id="632">  90  </t>
+<t id="633">  1  </t><t id="634">  0  </t><t id="635">  900000  </t>
+
+<t id="640">  Dragon Breath XL  </t><t id="641">  500  </t><t id="642">  200  </t>
+<t id="643">  1  </t><t id="644">  0  </t><t id="645">  900000  </t>
+
+<t id="650">  Rock Launcher S  </t><t id="651">  4504  </t><t id="652">  1801  </t>
+<t id="653">  0  </t><t id="654">  0  </t><t id="655">  900000  </t>
+
+<t id="660">  Rock Launcher M  </t><t id="661">  9009  </t><t id="662">  3603  </t>
+<t id="663">  0  </t><t id="664">  0  </t><t id="665">  900000  </t>
+
+<t id="670">  Rock Launcher L  </t><t id="671">  18018  </t><t id="672">  7207  </t>
+<t id="673">  0  </t><t id="674">  0  </t><t id="675">  900000  </t>
+
+<t id="680">  Rock Launcher XL  </t><t id="681">  27027  </t><t id="682">  10810  </t>
+<t id="683">  0  </t><t id="684">  0  </t><t id="685">  900000  </t>
+
+<t id="690">  Energy Capsule S  </t><t id="691">  5000  </t><t id="692">  1250  </t>
+<t id="693">  0  </t><t id="694">  0  </t><t id="695">  900000  </t>
+
+<t id="700">  Energy Capsule M  </t><t id="701">  10000  </t><t id="702">  2500  </t>
+<t id="703">  0  </t><t id="704">  0  </t><t id="705">  900000  </t>
+
+<t id="710">  Energy Capsule L  </t><t id="711">  20000  </t><t id="712">  5000  </t>
+<t id="713">  0  </t><t id="714">  0  </t><t id="715">  900000  </t>
+
+<t id="720">  Energy Capsule XL  </t><t id="721">  30000  </t><t id="722">  7500  </t>
+<t id="723">  0  </t><t id="724">  0  </t><t id="725">  900000  </t>
+
+<t id="730">  Lightning Capsule S  </t><t id="731">  2500  </t><t id="732">  250  </t>
+<t id="733">  0  </t><t id="734">  0  </t><t id="735">  900000  </t>
+
+<t id="740">  Lightning Capsule M  </t><t id="741">  6000  </t><t id="742">  600  </t>
+<t id="743">  0  </t><t id="744">  0  </t><t id="745">  900000  </t>
+
+<t id="750">  Lightning Capsule L  </t><t id="751">  12500  </t><t id="752">  1250  </t>
+<t id="753">  0  </t><t id="754">  0  </t><t id="755">  900000  </t>
+
+<t id="760">  Lightning Capsule XL  </t><t id="761">  27500  </t><t id="762">  2750  </t>
+<t id="763">  0  </t><t id="764">  0  </t><t id="765">  900000  </t>
+
+<t id="770">  Dragon Fire Exhaust S  </t><t id="771">  1500  </t><t id="772">  500  </t>
+<t id="773">  0  </t><t id="774">  0  </t><t id="775">  900000  </t>
+
+<t id="780">  Dragon Fire Exhaust M  </t><t id="781">  3333  </t><t id="782">  1083  </t>
+<t id="783">  0  </t><t id="784">  0  </t><t id="785">  900000  </t>
+
+<t id="790">  Dragon Fire Exhaust L  </t><t id="791">  8333  </t><t id="792">  2333  </t>
+<t id="793">  0  </t><t id="794">  0  </t><t id="795">  900000  </t>
+
+<t id="800">  Dragon Fire Exhaust XL  </t><t id="801">  18333  </t><t id="802">  5000  </t>
+<t id="803">  0  </t><t id="804">  0  </t><t id="805">  900000  </t>
+
+<t id="810">  Abrasion Laser  </t>
+
+<t id="820">  SPARE LASER DUMMY 1  </t><t id="821">  8719  </t><t id="822">  4354  </t>
+<t id="823">  0  </t><t id="824">  0  </t><t id="825">  900000  </t>
+
+<t id="830">  SPARE LASER DUMMY 2  </t><t id="831">  8719  </t><t id="832">  4354  </t>
+<t id="833">  0  </t><t id="834">  0  </t><t id="835">  900000  </t>
+
+<t id="840">  SPARE LASER DUMMY 3  </t><t id="841">  8719  </t><t id="842">  4354  </t>
+<t id="843">  0  </t><t id="844">  0  </t><t id="845">  900000  </t>
+
+</page>
+</language>

@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<language id="44">
+<page id="8370" title="T2 page" descr="">
+	<t id="1">[author]T2-Droid[/author][title]The Ship Report - %s[/title]</t>
+	<t id="3">Item: %s\n</t>
+	<t id="4">Buying price: %s Cr.</t>
+	<t id="5">, Selling price: %s Cr.\n</t>
+	<t id="6">Consumer cargo bay must be filled less than %s pcs. to start move to loading.\n</t>
+	<t id="7">Exclude station(s): </t>
+	<t id="8">Supplier(s): </t>
+	<t id="9">Consumer(s): </t>
+	<t id="10">Any stations at working range\n</t>
+	<t id="11">   </t>
+	<t id="12">Energy reserved for jumpdrive: %s\n</t>
+	<t id="13">\n</t>
+	<t id="15">Working range: %s and sectors within %s jump%s\n</t>
+	<t id="16">Working range: The sector %s\n</t>
+	<t id="17">Supplier cargo bay must be filled greater than %s pcs. to start move to unloading.\n</t>
+	<t id="20">s</t>
+	<t id="21">s</t>
+	<t id="22"> </t>
+	<t id="30">Total: Time: %s, Turnover: %s, Profit: %s Cr.\n</t>
+	<t id="31">Buying: Time %s, Waiting %s, Value %s Cr.\n</t>
+	<t id="32">Selling: Time %s, Waiting %s, Value %s Cr.\n</t>
+	<t id="40">If the lists are not empty then work only with stations from the lists.\n</t>
+	<t id="41">If no suitable stations in the list then work with any station within range.\n</t>
+	<t id="42">No space in cargo bay</t>
+</page>
+<page id="2010" title="T2 commands" descr="">
+	<t id="458">\033GТ2:\033Z Run</t>
+	<t id="1257">\033GТ2:\033Z Report</t>
+	<t id="1258">\033GТ2:\033Z Setup List</t>
+	<t id="1259">\033GТ2:\033Z Config</t>
+	<t id="1260">\033GТ2:\033Z Form List</t>
+</page>
+<page id="2011" title="T2 short commands" descr="">
+	<t id="458">Run.Droid.</t>
+	<t id="1257">Rep.</t>
+	<t id="1258">Set.Lst.</t>
+	<t id="1259">Conf.</t>
+	<t id="1260">Form.Lst.</t>
+</page>
+<page id="2022" title="T2 commands info" descr="">
+	<t id="458">This command runs T2-Droid on board</t>
+	<t id="1257">Get the report</t>
+	<t id="1258">Add/Delete stations to/from list or clear list</t>
+	<t id="1259">Change T2-Droid configuration</t>
+	<t id="1260">Form/change list by condition</t>
+</page>
+</language>

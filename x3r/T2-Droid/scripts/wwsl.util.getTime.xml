@@ -1,0 +1,25 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>wwsl.util.getTime</name>
+<version>1</version>
+<engineversion>32</engineversion>
+<description>Get time btw 2 times</description>
+<arguments>
+<argument index="1" name="BegTime" type="Var/Number" desc="Beg time" />
+<argument index="2" name="EndTime" type="Var/Number" desc="End time" />
+<argument index="3" name="OddTime" type="Var/Number" desc="Odd time" />
+</arguments>
+<sourcetext>
+<line linenr="001" indent=""><var>skip&#160;if&#160;</var><var>$EndTime</var></line>
+<line linenr="002" indent="&#160;"><var>$EndTime&#160;=&#160;</var><text>playing&#160;time</text></line>
+<line linenr="003" indent=""></line>
+<line linenr="004" indent=""><var>$WaitTime&#160;=&#160;</var><var>$EndTime</var><text>&#160;</text><var>-</var><text>&#160;</text><var>$BegTime</var></line>
+<line linenr="005" indent=""><var>skip&#160;if&#160;not&#160;</var><var>$OddTime</var></line>
+<line linenr="006" indent="&#160;"><var>$WaitTime&#160;=&#160;</var><var>$WaitTime</var><text>&#160;</text><var>+</var><text>&#160;</text><var>$OddTime</var></line>
+<line linenr="007" indent=""><text>return&#160;</text><var>$WaitTime</var></line>
+</sourcetext>
+<codearray>
+<sval type="array" size="10"><sval type="string" val="wwsl.util.getTime" /><sval type="int" val="32" /><sval type="string" val="Get time btw 2 times" /><sval type="int" val="1" /><sval type="int" val="0" /><sval type="array" size="4"><sval type="string" val="BegTime" /><sval type="string" val="EndTime" /><sval type="string" val="OddTime" /><sval type="string" val="WaitTime" /></sval><sval type="array" size="6"><sval type="array" size="7"><sval type="int" val="104" /><sval type="int" val="-536870393" /><sval type="int" val="1" /><sval type="int" val="131074" /><sval type="int" val="1" /><sval type="int" val="1" /><sval type="int" val="-1" /></sval><sval type="array" size="2"><sval type="int" val="141" /><sval type="int" val="1" /></sval><sval type="array" size="13"><sval type="int" val="104" /><sval type="int" val="3" /><sval type="int" val="3" /><sval type="int" val="131074" /><sval type="int" val="1" /><sval type="int" val="131074" /><sval type="int" val="0" /><sval type="int" val="15" /><sval type="int" val="12" /><sval type="int" val="3" /><sval type="int" val="-1" /><sval type="int" val="12" /><sval type="int" val="-2" /></sval><sval type="array" size="7"><sval type="int" val="104" /><sval type="int" val="-1610611448" /><sval type="int" val="1" /><sval type="int" val="131074" /><sval type="int" val="2" /><sval type="int" val="1" /><sval type="int" val="-1" /></sval><sval type="array" size="13"><sval type="int" val="104" /><sval type="int" val="3" /><sval type="int" val="3" /><sval type="int" val="131074" /><sval type="int" val="3" /><sval type="int" val="131074" /><sval type="int" val="2" /><sval type="int" val="15" /><sval type="int" val="11" /><sval type="int" val="3" /><sval type="int" val="-1" /><sval type="int" val="11" /><sval type="int" val="-2" /></sval><sval type="array" size="3"><sval type="int" val="103" /><sval type="int" val="131074" /><sval type="int" val="3" /></sval></sval><sval type="array" size="3"><sval type="array" size="2"><sval type="int" val="10" /><sval type="string" val="Beg time" /></sval><sval type="array" size="2"><sval type="int" val="10" /><sval type="string" val="End time" /></sval><sval type="array" size="2"><sval type="int" val="10" /><sval type="string" val="Odd time" /></sval></sval><sval type="array" size="1"><sval type="array" size="2"><sval type="int" val="2" /><sval type="int" val="2" /></sval></sval><sval type="int" val="0" /></sval>
+</codearray>
+</script>

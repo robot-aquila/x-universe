@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>wwsl.hash.create</name>
+<version>1000</version>
+<engineversion>33</engineversion>
+<description>Create hash</description>
+<arguments>
+</arguments>
+<sourcetext>
+<line linenr="001" indent=""><var>$keys&#160;=&#160;</var><text>&#160;array&#160;alloc:&#160;size=</text><var>0</var></line>
+<line linenr="002" indent=""><var>$values&#160;=&#160;</var><text>&#160;array&#160;alloc:&#160;size=</text><var>0</var></line>
+<line linenr="003" indent=""><var>$hash&#160;=&#160;</var><text>&#160;array&#160;alloc:&#160;size=</text><var>2</var></line>
+<line linenr="004" indent=""><var>$hash</var><text>[</text><var>0</var><text>]&#160;=&#160;</text><var>$keys</var></line>
+<line linenr="005" indent=""><var>$hash</var><text>[</text><var>1</var><text>]&#160;=&#160;</text><var>$values</var></line>
+<line linenr="006" indent=""><text>return&#160;</text><var>$hash</var></line>
+</sourcetext>
+<codearray>
+<sval type="array" size="10"><sval type="string" val="wwsl.hash.create" /><sval type="int" val="33" /><sval type="string" val="Create hash" /><sval type="int" val="1000" /><sval type="int" val="0" /><sval type="array" size="3"><sval type="string" val="keys" /><sval type="string" val="values" /><sval type="string" val="hash" /></sval><sval type="array" size="6"><sval type="array" size="4"><sval type="int" val="128" /><sval type="int" val="0" /><sval type="int" val="4" /><sval type="int" val="0" /></sval><sval type="array" size="4"><sval type="int" val="128" /><sval type="int" val="1" /><sval type="int" val="4" /><sval type="int" val="0" /></sval><sval type="array" size="4"><sval type="int" val="128" /><sval type="int" val="2" /><sval type="int" val="4" /><sval type="int" val="2" /></sval><sval type="array" size="7"><sval type="int" val="130" /><sval type="int" val="131074" /><sval type="int" val="2" /><sval type="int" val="4" /><sval type="int" val="0" /><sval type="int" val="131074" /><sval type="int" val="0" /></sval><sval type="array" size="7"><sval type="int" val="130" /><sval type="int" val="131074" /><sval type="int" val="2" /><sval type="int" val="4" /><sval type="int" val="1" /><sval type="int" val="131074" /><sval type="int" val="1" /></sval><sval type="array" size="3"><sval type="int" val="103" /><sval type="int" val="131074" /><sval type="int" val="2" /></sval></sval><sval type="int" val="0" /><sval type="int" val="0" /><sval type="int" val="0" /></sval>
+</codearray>
+</script>

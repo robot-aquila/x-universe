@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<language id="7">
+<page id="8371" title="SC page" descr="">
+	<t id="1">[author]%s[/author][title]Предупреждение системы безопасности[/title]</t>
+	<t id="2">В секторе %s %s\n</t>
+	<t id="5">обнаружены вражеские корабли</t>
+	<t id="6">обнаружены потенциально-опасные вражеские корабли</t>
+	<t id="7">попытка нападения со стороны %s код %s</t>
+    <t id="8">Предпринята попытка бегства на станцию %s\n</t>
+    <t id="100">%s next+%s stage=%s sector=[%s] ship=[%s]</t>
+</page>
+<page id="2010" title="SC commands" descr="">
+	<t id="1256">\033GSC:\033Z Контроллер безопасности</t>
+</page>
+<page id="2011" title="SC short commands" descr="">
+	<t id="1256">Безопасн.</t>
+</page>
+<page id="2022" title="SC commands info" descr="">
+	<t id="1256">Запуск контроллера безопасности</t>
+</page>
+</language>

@@ -1,0 +1,19 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>wwsl.T2.getVar</name>
+<version>1000</version>
+<engineversion>33</engineversion>
+<description>Get local variable</description>
+<arguments>
+<argument index="1" name="varSuffix" type="Var/String" desc="Variable suffix" />
+</arguments>
+<sourcetext>
+<line linenr="001" interruptable="@" indent=""><var>$varName&#160;=&#160;</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.getVarName</call><text>&#160;:&#160;</text><text>&#160;Variable&#160;suffix=</text><var>$varSuffix</var></line>
+<line linenr="002" indent=""><var>$value&#160;=&#160;</var><var>[THIS]&#160;-&gt;</var><text>&#160;get&#160;local&#160;variable:&#160;name=</text><var>$varName</var></line>
+<line linenr="003" indent=""><text>return&#160;</text><var>$value</var></line>
+</sourcetext>
+<codearray>
+<sval type="array" size="10"><sval type="string" val="wwsl.T2.getVar" /><sval type="int" val="33" /><sval type="string" val="Get local variable" /><sval type="int" val="1000" /><sval type="int" val="0" /><sval type="array" size="3"><sval type="string" val="varSuffix" /><sval type="string" val="varName" /><sval type="string" val="value" /></sval><sval type="array" size="3"><sval type="array" size="8"><sval type="int" val="102" /><sval type="string" val="wwsl.T2.getVarName" /><sval type="int" val="1" /><sval type="int" val="131075" /><sval type="int" val="1" /><sval type="int" val="1" /><sval type="int" val="131074" /><sval type="int" val="0" /></sval><sval type="array" size="6"><sval type="int" val="156" /><sval type="int" val="131075" /><sval type="int" val="1" /><sval type="int" val="131074" /><sval type="int" val="1" /><sval type="int" val="2" /></sval><sval type="array" size="3"><sval type="int" val="103" /><sval type="int" val="131074" /><sval type="int" val="2" /></sval></sval><sval type="array" size="1"><sval type="array" size="2"><sval type="int" val="11" /><sval type="string" val="Variable suffix" /></sval></sval><sval type="int" val="0" /><sval type="int" val="0" /></sval>
+</codearray>
+</script>

@@ -1,0 +1,28 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>wwsl.T2.denyStation</name>
+<version>1</version>
+<engineversion>32</engineversion>
+<description>Deny specified station</description>
+<arguments>
+<argument index="1" name="Station" type="Var/Station" desc="Station" />
+</arguments>
+<sourcetext>
+<line linenr="001" interruptable="@" indent=""><var>skip&#160;if&#160;not&#160;</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.isDeniedStation</call><text>&#160;:&#160;</text><text>&#160;Station=</text><var>$Station</var></line>
+<line linenr="002" indent="&#160;"><text>return&#160;</text><var>[FALSE]</var></line>
+<line linenr="003" indent=""></line>
+<line linenr="004" interruptable="@" indent=""><var>$VarPrefix&#160;=&#160;</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.getVariablesPrefix</call><text>&#160;:&#160;</text></line>
+<line linenr="005" indent=""><var>$VarName&#160;=&#160;</var><var>$VarPrefix</var><text>&#160;</text><var>+</var><text>&#160;</text><var>'DL'</var></line>
+<line linenr="006" indent=""><var>$DeniedStations&#160;=&#160;</var><var>[THIS]&#160;-&gt;</var><text>&#160;get&#160;local&#160;variable:&#160;name=</text><var>$VarName</var></line>
+<line linenr="007" indent=""><var>skip&#160;if&#160;</var><var>$DeniedStations</var></line>
+<line linenr="008" indent="&#160;"><var>$DeniedStations&#160;=&#160;</var><text>&#160;array&#160;alloc:&#160;size=</text><var>0</var></line>
+<line linenr="009" indent=""><text>append&#160;</text><var>$Station</var><text>&#160;to&#160;array&#160;</text><var>$DeniedStations</var></line>
+<line linenr="010" indent=""><var>[THIS]&#160;-&gt;</var><text>&#160;set&#160;local&#160;variable:&#160;name=</text><var>$VarName</var><text>&#160;value=</text><var>$DeniedStations</var></line>
+<line linenr="011" indent=""></line>
+<line linenr="012" indent=""><text>return&#160;</text><var>[TRUE]</var></line>
+</sourcetext>
+<codearray>
+<sval type="array" size="10"><sval type="string" val="wwsl.T2.denyStation" /><sval type="int" val="32" /><sval type="string" val="Deny specified station" /><sval type="int" val="1" /><sval type="int" val="0" /><sval type="array" size="4"><sval type="string" val="Station" /><sval type="string" val="VarPrefix" /><sval type="string" val="VarName" /><sval type="string" val="DeniedStations" /></sval><sval type="array" size="10"><sval type="array" size="8"><sval type="int" val="102" /><sval type="string" val="wwsl.T2.isDeniedStation" /><sval type="int" val="-1610612216" /><sval type="int" val="131075" /><sval type="int" val="1" /><sval type="int" val="1" /><sval type="int" val="131074" /><sval type="int" val="0" /></sval><sval type="array" size="3"><sval type="int" val="103" /><sval type="int" val="131075" /><sval type="int" val="9" /></sval><sval type="array" size="6"><sval type="int" val="102" /><sval type="string" val="wwsl.T2.getVariablesPrefix" /><sval type="int" val="1" /><sval type="int" val="131075" /><sval type="int" val="1" /><sval type="int" val="0" /></sval><sval type="array" size="13"><sval type="int" val="104" /><sval type="int" val="2" /><sval type="int" val="3" /><sval type="int" val="131074" /><sval type="int" val="1" /><sval type="int" val="5" /><sval type="string" val="DL" /><sval type="int" val="15" /><sval type="int" val="11" /><sval type="int" val="3" /><sval type="int" val="-1" /><sval type="int" val="11" /><sval type="int" val="-2" /></sval><sval type="array" size="6"><sval type="int" val="156" /><sval type="int" val="131075" /><sval type="int" val="1" /><sval type="int" val="131074" /><sval type="int" val="2" /><sval type="int" val="3" /></sval><sval type="array" size="7"><sval type="int" val="104" /><sval type="int" val="-536869113" /><sval type="int" val="1" /><sval type="int" val="131074" /><sval type="int" val="3" /><sval type="int" val="1" /><sval type="int" val="-1" /></sval><sval type="array" size="4"><sval type="int" val="128" /><sval type="int" val="3" /><sval type="int" val="4" /><sval type="int" val="0" /></sval><sval type="array" size="5"><sval type="int" val="135" /><sval type="int" val="131074" /><sval type="int" val="3" /><sval type="int" val="131074" /><sval type="int" val="0" /></sval><sval type="array" size="7"><sval type="int" val="155" /><sval type="int" val="131075" /><sval type="int" val="1" /><sval type="int" val="131074" /><sval type="int" val="2" /><sval type="int" val="131074" /><sval type="int" val="3" /></sval><sval type="array" size="3"><sval type="int" val="103" /><sval type="int" val="131075" /><sval type="int" val="10" /></sval></sval><sval type="array" size="1"><sval type="array" size="2"><sval type="int" val="12" /><sval type="string" val="Station" /></sval></sval><sval type="array" size="2"><sval type="array" size="2"><sval type="int" val="2" /><sval type="int" val="2" /></sval><sval type="array" size="2"><sval type="int" val="9" /><sval type="int" val="2" /></sval></sval><sval type="int" val="0" /></sval>
+</codearray>
+</script>

@@ -1,0 +1,71 @@
+<?xml version="1.0" standalone="yes" ?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<script>
+<name>wwsl.T2.function1</name>
+<version>301</version>
+<engineversion>45</engineversion>
+<description>T2: Common - Function library call one arg</description>
+<arguments>
+<argument index="1" name="fn" type="Перем/Число" desc="#Fn" />
+<argument index="2" name="arg1" type="Значение" desc="arg1" />
+</arguments>
+<sourcetext>
+<line linenr="001" interruptable="@" indent=""><var>$Result=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>$fn</var><text>&#160;</text><text>&#160;arg1=</text><var>$arg1</var><text>&#160;</text><text>&#160;arg2=</text><var>null</var><text>&#160;</text><text>&#160;arg3=</text><var>null</var><text>&#160;</text><text>&#160;arg4=</text><var>null</var><text>&#160;</text><text>&#160;arg5=</text><var>null</var></line>
+<line linenr="002" indent=""><text>return&#160;</text><var>$Result</var></line>
+</sourcetext>
+<codearray>
+
+<sval type="array" size="10">
+  <sval type="string" val="wwsl.T2.function1"/>
+  <sval type="int" val="45"/>
+  <sval type="string" val="T2: Common - Function library call one arg"/>
+  <sval type="int" val="301"/>
+  <sval type="int" val="0"/>
+  <sval type="array" size="3">
+    <sval type="string" val="fn"/>
+    <sval type="string" val="arg1"/>
+    <sval type="string" val="Result"/>
+  </sval>
+  <sval type="array" size="2">
+    <sval type="array" size="18">
+      <sval type="int" val="102"/>
+      <sval type="string" val="wwsl.T2.function"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="103"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="2"/>
+    </sval>
+  </sval>
+  <sval type="array" size="2">
+    <sval type="array" size="2">
+      <sval type="int" val="10"/>
+      <sval type="string" val="#Fn"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="9"/>
+      <sval type="string" val="arg1"/>
+    </sval>
+  </sval>
+  <sval type="int" val="0"/>
+  <sval type="int" val="0"/>
+</sval>
+
+</codearray>
+</script>
