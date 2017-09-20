@@ -2,39 +2,270 @@
 <?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
 <script>
 <name>wwsl.T2.signal.attacked</name>
-<version>301</version>
-<engineversion>45</engineversion>
+<version>302</version>
+<engineversion>54</engineversion>
 <description>T2: Ship has been attacked</description>
 <arguments>
 <argument index="1" name="Attacker" type="Значение" desc="Attacker" />
 <argument index="2" name="Action" type="Значение" desc="Action" />
 </arguments>
+<sourceplaintext>
+<![CDATA[
+  ifget task ID
+    [THIS] ->interrupt task 0 with script wwsl.T2.signal.attacked and prio 100: arg1=$Attacker arg2=$Action arg3=null arg4=null
+    return null
+  end
+  
+  $T2.Config=get global variable: name='wwsl.T2.global'
+  $Dummy=$T2.Config[4]
+  $Debug=32 & $Dummy
+  if$Debug
+@   $Action.Text=[THIS] -> call script wwsl.T2.function1 :  #Fn=57  arg1=$Action
+@   =[THIS] -> call script wwsl.T2.function3 :  #Fn=591  arg1=': Was attacked by %s during %s'  arg2=$Attacker  arg3=$Action.Text
+  end
+  
+  if$Action == [ACTION_ENTER_GATE] OR $Action == [ACTION_JUMP] OR $Action == [ACTION_LAND_IN_STATION]
+@   =[THIS] -> call script wwsl.T2.function :  #Fn=591  arg1='Will skip processing because of current action'  arg2=null  arg3=null  arg4=null  arg5=null
+    return null
+  end
+  
+  * There are only two cases:
+  * 1 - if there is 50 prio then it is fleeing
+  * 2 - if there is 51 prio then it is making a defensive action
+  ifis script with prio 50 on stack
+@   =[THIS] -> call script wwsl.T2.function :  #Fn=591  arg1='Script with prio 50 is on stack'  arg2=null  arg3=null  arg4=null  arg5=null
+    if notis script with prio 51 on stack
+@     =[THIS] -> call script wwsl.T2.function :  #Fn=591  arg1='But script with prio 51 isn't on stack. Run defensive action'  arg2=null  arg3=null  arg4=null  arg5=null
+      set script priority to 51
+      gosub tryDefensiveAction
+    end
+    return null
+  end
+  
+  $JD.installed=[THIS] -> get true amount of ware Прыжковый двигатель in cargo bay
+  $fuel.available=[THIS] -> get amount of ware Батареи in cargo bay
+  $fuel.perJump=[THIS] -> needed jump drive energy for jump to sector [SECTOR]
+  if$JD.installed AND $fuel.available >= $fuel.perJump
+    gosub tryToUseJD
+  else
+    gosub tryToFlee
+  end
+  return null
+  
+  
+  * Cannot use JumpDrive
+  tryToFlee:
+  if[THIS] != [PLAYERSHIP]
+    $r=random value from 5 to 11 - 1
+    $r=[THIS] -> launch $r fight drones: protect me or attack target=null
+  end
+  set script priority to 50
+  $flags=[Find.DockingAllowed] | [Find.Friend] | [Find.Neutral] | [Find.Nearest]
+  $closest.station=find station in galaxy: startsector=[SECTOR] class or type=null race=null flags=$flags refobj=[THIS] serial=null max.jumps=10
+  if$closest.station
+  * TODO: Inform player of situation: start moving to safe station
+    [THIS] ->set command: COMMAND_DOCKAT
+    [THIS] ->set destination to $closest.station
+    [THIS] ->set command target: $closest.station
+@   while not[THIS] -> call script wwsl.T2.nav.move :  Target=$closest.station  Precision m.=null
+@     skip if[THIS] -> call script wwsl.T2.function1 :  #Fn=531  arg1=$closest.station
+        break
+    end
+    if[DOCKEDAT] == $closest.station
+  * TODO: Wait for situation change
+@     =wait randomly from 60000 to 120000 ms
+      endsub
+    end
+  end
+  * TODO: Inform player of situation: no safe station in range
+  * Will do defensive maneuver continuously
+  * Until enemy destroyed
+  gosub tryLastChance
+  endsub
+  
+  
+  tryToUseJD:
+  * TODO:
+  gosub tryToFlee
+  endsub
+  
+  
+  tryDefensiveAction:
+  * TODO: can fire Mosquito missile if attacker is a small ship
+  * TODO: can analyze attacker speed and range
+  $r=random value from 20 to 60 - 1
+  $t=random value from 15000 to 40000 - 1
+@ =[THIS] -> defensive move: type=null, intensity=$r, timeout=$tms, avoid object=$Attacker
+  endsub
+  
+  
+  tryLastChance:
+  while$Attacker -> exists
+    skip if$Attacker -> is in same sector as [THIS]
+      break
+    $t=random value from 15000 to 40000 - 1
+@   =[THIS] -> defensive move: type=null, intensity=0, timeout=$tms, avoid object=$Attacker
+  end
+  * TODO: There is the case when we was saved thanks last chance!
+  * Very interesting message may be sent here
+  endsub
+  
+  return null
+]]>
+</sourceplaintext>
 <sourcetext>
-<line linenr="001" indent=""><var>$T2.Config=</var><text>get&#160;global&#160;variable:&#160;name=</text><var>'wwsl.T2.global'</var></line>
-<line linenr="002" indent=""><var>$Dummy=</var><var>$T2.Config</var><text>[</text><var>4</var><text>]</text></line>
-<line linenr="003" indent=""><var>$Debug=</var><var>32</var><text>&#160;</text><var>&amp;</var><text>&#160;</text><var>$Dummy</var></line>
-<line linenr="004" indent=""><var>do&#160;if&#160;</var><var>$Debug</var></line>
-<line linenr="005" interruptable="@" indent="&#160;"><var>=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function3</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>591</var><text>&#160;</text><text>&#160;arg1=</text><var>':&#160;Attacked&#160;by&#160;%s&#160;(action&#160;%s)'</var><text>&#160;</text><text>&#160;arg2=</text><var>$Attacker</var><text>&#160;</text><text>&#160;arg3=</text><var>$Action</var></line>
-<line linenr="006" interruptable="@" indent=""><var>$Result=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>lib.ship.signal.attacked.trader</call><text>&#160;:&#160;</text><text>&#160;the&#160;attacker=</text><var>$Attacker</var><text>&#160;</text><text>&#160;action=</text><var>$Action</var></line>
-<line linenr="007" indent=""><text>return&#160;</text><var>$Result</var></line>
+<line indent=""><var>if</var><text>get&#160;task&#160;ID</text></line>
+<line indent="&#160;"><var>[THIS]&#160;-&gt;</var><text>interrupt&#160;task&#160;</text><var>0</var><text>&#160;with&#160;script&#160;</text><call>wwsl.T2.signal.attacked</call><text>&#160;and&#160;prio&#160;</text><var>100</var><text>:&#160;arg1=</text><var>$Attacker</var><text>&#160;arg2=</text><var>$Action</var><text>&#160;arg3=</text><var>null</var><text>&#160;arg4=</text><var>null</var></line>
+<line indent="&#160;"><text>return&#160;</text><var>null</var></line>
+<line indent=""><text>end</text></line>
+<line indent=""></line>
+<line indent=""><var>$T2.Config=</var><text>get&#160;global&#160;variable:&#160;name=</text><var>'wwsl.T2.global'</var></line>
+<line indent=""><var>$Dummy=</var><var>$T2.Config</var><text>[</text><var>4</var><text>]</text></line>
+<line indent=""><var>$Debug=</var><var>32</var><text>&#160;</text><var>&amp;</var><text>&#160;</text><var>$Dummy</var></line>
+<line indent=""><var>if</var><var>$Debug</var></line>
+<line interruptable="@" indent="&#160;"><var>$Action.Text=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function1</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>57</var><text>&#160;</text><text>&#160;arg1=</text><var>$Action</var></line>
+<line interruptable="@" indent="&#160;"><var>=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function3</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>591</var><text>&#160;</text><text>&#160;arg1=</text><var>':&#160;Was&#160;attacked&#160;by&#160;%s&#160;during&#160;%s'</var><text>&#160;</text><text>&#160;arg2=</text><var>$Attacker</var><text>&#160;</text><text>&#160;arg3=</text><var>$Action.Text</var></line>
+<line indent=""><text>end</text></line>
+<line indent=""></line>
+<line indent=""><var>if</var><var>$Action</var><text>&#160;</text><var>==</var><text>&#160;</text><var>[ACTION_ENTER_GATE]</var><text>&#160;</text><var>OR</var><text>&#160;</text><var>$Action</var><text>&#160;</text><var>==</var><text>&#160;</text><var>[ACTION_JUMP]</var><text>&#160;</text><var>OR</var><text>&#160;</text><var>$Action</var><text>&#160;</text><var>==</var><text>&#160;</text><var>[ACTION_LAND_IN_STATION]</var></line>
+<line interruptable="@" indent="&#160;"><var>=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>591</var><text>&#160;</text><text>&#160;arg1=</text><var>'Will&#160;skip&#160;processing&#160;because&#160;of&#160;current&#160;action'</var><text>&#160;</text><text>&#160;arg2=</text><var>null</var><text>&#160;</text><text>&#160;arg3=</text><var>null</var><text>&#160;</text><text>&#160;arg4=</text><var>null</var><text>&#160;</text><text>&#160;arg5=</text><var>null</var></line>
+<line indent="&#160;"><text>return&#160;</text><var>null</var></line>
+<line indent=""><text>end</text></line>
+<line indent=""></line>
+<line indent=""><comment><text>*&#160;</text><var>There&#160;are&#160;only&#160;two&#160;cases:</var></comment></line>
+<line indent=""><comment><text>*&#160;</text><var>1&#160;-&#160;if&#160;there&#160;is&#160;50&#160;prio&#160;then&#160;it&#160;is&#160;fleeing</var></comment></line>
+<line indent=""><comment><text>*&#160;</text><var>2&#160;-&#160;if&#160;there&#160;is&#160;51&#160;prio&#160;then&#160;it&#160;is&#160;making&#160;a&#160;defensive&#160;action</var></comment></line>
+<line indent=""><var>if</var><text>is&#160;script&#160;with&#160;prio&#160;</text><var>50</var><text>&#160;on&#160;stack</text></line>
+<line interruptable="@" indent="&#160;"><var>=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>591</var><text>&#160;</text><text>&#160;arg1=</text><var>'Script&#160;with&#160;prio&#160;50&#160;is&#160;on&#160;stack'</var><text>&#160;</text><text>&#160;arg2=</text><var>null</var><text>&#160;</text><text>&#160;arg3=</text><var>null</var><text>&#160;</text><text>&#160;arg4=</text><var>null</var><text>&#160;</text><text>&#160;arg5=</text><var>null</var></line>
+<line indent="&#160;"><var>if&#160;not</var><text>is&#160;script&#160;with&#160;prio&#160;</text><var>51</var><text>&#160;on&#160;stack</text></line>
+<line interruptable="@" indent="&#160;&#160;"><var>=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>591</var><text>&#160;</text><text>&#160;arg1=</text><var>'But&#160;script&#160;with&#160;prio&#160;51&#160;isn't&#160;on&#160;stack.&#160;Run&#160;defensive&#160;action'</var><text>&#160;</text><text>&#160;arg2=</text><var>null</var><text>&#160;</text><text>&#160;arg3=</text><var>null</var><text>&#160;</text><text>&#160;arg4=</text><var>null</var><text>&#160;</text><text>&#160;arg5=</text><var>null</var></line>
+<line indent="&#160;&#160;"><text>set&#160;script&#160;priority&#160;to&#160;</text><var>51</var></line>
+<line indent="&#160;&#160;"><text>gosub&#160;</text><var>tryDefensiveAction</var></line>
+<line indent="&#160;"><text>end</text></line>
+<line indent="&#160;"><text>return&#160;</text><var>null</var></line>
+<line indent=""><text>end</text></line>
+<line indent=""></line>
+<line indent=""><var>$JD.installed=</var><var>[THIS]&#160;-&gt;</var><text>&#160;get&#160;true&#160;amount&#160;of&#160;ware&#160;</text><var>Прыжковый&#160;двигатель</var><text>&#160;in&#160;cargo&#160;bay</text></line>
+<line indent=""><var>$fuel.available=</var><var>[THIS]&#160;-&gt;</var><text>&#160;get&#160;amount&#160;of&#160;ware&#160;</text><var>Батареи</var><text>&#160;in&#160;cargo&#160;bay</text></line>
+<line indent=""><var>$fuel.perJump=</var><var>[THIS]&#160;-&gt;</var><text>&#160;needed&#160;jump&#160;drive&#160;energy&#160;for&#160;jump&#160;to&#160;sector&#160;</text><var>[SECTOR]</var></line>
+<line indent=""><var>if</var><var>$JD.installed</var><text>&#160;</text><var>AND</var><text>&#160;</text><var>$fuel.available</var><text>&#160;</text><var>&gt;=</var><text>&#160;</text><var>$fuel.perJump</var></line>
+<line indent="&#160;"><text>gosub&#160;</text><var>tryToUseJD</var></line>
+<line indent=""><text>else</text></line>
+<line indent="&#160;"><text>gosub&#160;</text><var>tryToFlee</var></line>
+<line indent=""><text>end</text></line>
+<line indent=""><text>return&#160;</text><var>null</var></line>
+<line indent=""></line>
+<line indent=""></line>
+<line indent=""><comment><text>*&#160;</text><var>Cannot&#160;use&#160;JumpDrive</var></comment></line>
+<line indent=""><var>tryToFlee</var><text>:</text></line>
+<line indent=""><var>if</var><var>[THIS]</var><text>&#160;</text><var>!=</var><text>&#160;</text><var>[PLAYERSHIP]</var></line>
+<line indent="&#160;"><var>$r=</var><text>random&#160;value&#160;from&#160;</text><var>5</var><text>&#160;to&#160;</text><var>11</var><text>&#160;-&#160;1</text></line>
+<line indent="&#160;"><var>$r=</var><var>[THIS]&#160;-&gt;</var><text>&#160;launch&#160;</text><var>$r</var><text>&#160;fight&#160;drones:&#160;protect&#160;me&#160;or&#160;attack&#160;target=</text><var>null</var></line>
+<line indent=""><text>end</text></line>
+<line indent=""><text>set&#160;script&#160;priority&#160;to&#160;</text><var>50</var></line>
+<line indent=""><var>$flags=</var><var>[Find.DockingAllowed]</var><text>&#160;</text><var>|</var><text>&#160;</text><var>[Find.Friend]</var><text>&#160;</text><var>|</var><text>&#160;</text><var>[Find.Neutral]</var><text>&#160;</text><var>|</var><text>&#160;</text><var>[Find.Nearest]</var></line>
+<line indent=""><var>$closest.station=</var><text>find&#160;station&#160;in&#160;galaxy:&#160;startsector=</text><var>[SECTOR]</var><text>&#160;class&#160;or&#160;type=</text><var>null</var><text>&#160;race=</text><var>null</var><text>&#160;flags=</text><var>$flags</var><text>&#160;refobj=</text><var>[THIS]</var><text>&#160;serial=</text><var>null</var><text>&#160;max.jumps=</text><var>10</var></line>
+<line indent=""><var>if</var><var>$closest.station</var></line>
+<line indent=""><comment><text>*&#160;</text><var>TODO:&#160;Inform&#160;player&#160;of&#160;situation:&#160;start&#160;moving&#160;to&#160;safe&#160;station</var></comment></line>
+<line indent="&#160;"><var>[THIS]&#160;-&gt;</var><text>set&#160;command:&#160;</text><var>COMMAND_DOCKAT</var></line>
+<line indent="&#160;"><var>[THIS]&#160;-&gt;</var><text>set&#160;destination&#160;to&#160;</text><var>$closest.station</var></line>
+<line indent="&#160;"><var>[THIS]&#160;-&gt;</var><text>set&#160;command&#160;target:&#160;</text><var>$closest.station</var></line>
+<line interruptable="@" indent="&#160;"><var>while&#160;not</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.nav.move</call><text>&#160;:&#160;</text><text>&#160;Target=</text><var>$closest.station</var><text>&#160;</text><text>&#160;Precision&#160;m.=</text><var>null</var></line>
+<line interruptable="@" indent="&#160;&#160;"><var>skip&#160;if</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function1</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>531</var><text>&#160;</text><text>&#160;arg1=</text><var>$closest.station</var></line>
+<line indent="&#160;&#160;&#160;"><text>break</text></line>
+<line indent="&#160;"><text>end</text></line>
+<line indent="&#160;"><var>if</var><var>[DOCKEDAT]</var><text>&#160;</text><var>==</var><text>&#160;</text><var>$closest.station</var></line>
+<line indent=""><comment><text>*&#160;</text><var>TODO:&#160;Wait&#160;for&#160;situation&#160;change</var></comment></line>
+<line interruptable="@" indent="&#160;&#160;"><var>=</var><text>wait&#160;randomly&#160;from&#160;</text><var>60000</var><text>&#160;to&#160;</text><var>120000</var><text>&#160;ms</text></line>
+<line indent="&#160;&#160;"><text>endsub</text></line>
+<line indent="&#160;"><text>end</text></line>
+<line indent=""><text>end</text></line>
+<line indent=""><comment><text>*&#160;</text><var>TODO:&#160;Inform&#160;player&#160;of&#160;situation:&#160;no&#160;safe&#160;station&#160;in&#160;range</var></comment></line>
+<line indent=""><comment><text>*&#160;</text><var>Will&#160;do&#160;defensive&#160;maneuver&#160;continuously</var></comment></line>
+<line indent=""><comment><text>*&#160;</text><var>Until&#160;enemy&#160;destroyed</var></comment></line>
+<line indent=""><text>gosub&#160;</text><var>tryLastChance</var></line>
+<line indent=""><text>endsub</text></line>
+<line indent=""></line>
+<line indent=""></line>
+<line indent=""><var>tryToUseJD</var><text>:</text></line>
+<line indent=""><comment><text>*&#160;</text><var>TODO:</var></comment></line>
+<line indent=""><text>gosub&#160;</text><var>tryToFlee</var></line>
+<line indent=""><text>endsub</text></line>
+<line indent=""></line>
+<line indent=""></line>
+<line indent=""><var>tryDefensiveAction</var><text>:</text></line>
+<line indent=""><comment><text>*&#160;</text><var>TODO:&#160;can&#160;fire&#160;Mosquito&#160;missile&#160;if&#160;attacker&#160;is&#160;a&#160;small&#160;ship</var></comment></line>
+<line indent=""><comment><text>*&#160;</text><var>TODO:&#160;can&#160;analyze&#160;attacker&#160;speed&#160;and&#160;range</var></comment></line>
+<line indent=""><var>$r=</var><text>random&#160;value&#160;from&#160;</text><var>20</var><text>&#160;to&#160;</text><var>60</var><text>&#160;-&#160;1</text></line>
+<line indent=""><var>$t=</var><text>random&#160;value&#160;from&#160;</text><var>15000</var><text>&#160;to&#160;</text><var>40000</var><text>&#160;-&#160;1</text></line>
+<line interruptable="@" indent=""><var>=</var><var>[THIS]&#160;-&gt;</var><text>&#160;defensive&#160;move:&#160;type=</text><var>null</var><text>,&#160;intensity=</text><var>$r</var><text>,&#160;timeout=</text><var>$t</var><text>ms,&#160;avoid&#160;object=</text><var>$Attacker</var></line>
+<line indent=""><text>endsub</text></line>
+<line indent=""></line>
+<line indent=""></line>
+<line indent=""><var>tryLastChance</var><text>:</text></line>
+<line indent=""><var>while</var><var>$Attacker&#160;-&gt;</var><text>&#160;exists</text></line>
+<line indent="&#160;"><var>skip&#160;if</var><var>$Attacker&#160;-&gt;</var><text>&#160;is&#160;in&#160;same&#160;sector&#160;as&#160;</text><var>[THIS]</var></line>
+<line indent="&#160;&#160;"><text>break</text></line>
+<line indent="&#160;"><var>$t=</var><text>random&#160;value&#160;from&#160;</text><var>15000</var><text>&#160;to&#160;</text><var>40000</var><text>&#160;-&#160;1</text></line>
+<line interruptable="@" indent="&#160;"><var>=</var><var>[THIS]&#160;-&gt;</var><text>&#160;defensive&#160;move:&#160;type=</text><var>null</var><text>,&#160;intensity=</text><var>0</var><text>,&#160;timeout=</text><var>$t</var><text>ms,&#160;avoid&#160;object=</text><var>$Attacker</var></line>
+<line indent=""><text>end</text></line>
+<line indent=""><comment><text>*&#160;</text><var>TODO:&#160;There&#160;is&#160;the&#160;case&#160;when&#160;we&#160;was&#160;saved&#160;thanks&#160;last&#160;chance!</var></comment></line>
+<line indent=""><comment><text>*&#160;</text><var>Very&#160;interesting&#160;message&#160;may&#160;be&#160;sent&#160;here</var></comment></line>
+<line indent=""><text>endsub</text></line>
+<line indent=""></line>
+<line indent=""><text>return&#160;</text><var>null</var></line>
 </sourcetext>
 <codearray>
 
 <sval type="array" size="10">
   <sval type="string" val="wwsl.T2.signal.attacked"/>
-  <sval type="int" val="45"/>
+  <sval type="int" val="54"/>
   <sval type="string" val="T2: Ship has been attacked"/>
-  <sval type="int" val="301"/>
+  <sval type="int" val="302"/>
   <sval type="int" val="0"/>
-  <sval type="array" size="6">
+  <sval type="array" size="13">
     <sval type="string" val="Attacker"/>
     <sval type="string" val="Action"/>
     <sval type="string" val="T2.Config"/>
     <sval type="string" val="Dummy"/>
     <sval type="string" val="Debug"/>
-    <sval type="string" val="Result"/>
+    <sval type="string" val="Action.Text"/>
+    <sval type="string" val="JD.installed"/>
+    <sval type="string" val="fuel.available"/>
+    <sval type="string" val="fuel.perJump"/>
+    <sval type="string" val="r"/>
+    <sval type="string" val="flags"/>
+    <sval type="string" val="closest.station"/>
+    <sval type="string" val="t"/>
   </sval>
-  <sval type="array" size="7">
+  <sval type="array" size="64">
+    <sval type="array" size="2">
+      <sval type="int" val="147"/>
+      <sval type="int" val="-1610611965"/>
+    </sval>
+    <sval type="array" size="16">
+      <sval type="int" val="1016"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="wwsl.T2.signal.attacked"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="100"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="103"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
     <sval type="array" size="4">
       <sval type="int" val="158"/>
       <sval type="int" val="5"/>
@@ -66,12 +297,24 @@
     </sval>
     <sval type="array" size="7">
       <sval type="int" val="104"/>
-      <sval type="int" val="-1610611448"/>
+      <sval type="int" val="-1610610429"/>
       <sval type="int" val="1"/>
       <sval type="int" val="131074"/>
       <sval type="int" val="4"/>
       <sval type="int" val="1"/>
       <sval type="int" val="-1"/>
+    </sval>
+    <sval type="array" size="10">
+      <sval type="int" val="102"/>
+      <sval type="string" val="wwsl.T2.function1"/>
+      <sval type="int" val="5"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="57"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="1"/>
     </sval>
     <sval type="array" size="14">
       <sval type="int" val="102"/>
@@ -83,28 +326,489 @@
       <sval type="int" val="4"/>
       <sval type="int" val="591"/>
       <sval type="int" val="5"/>
-      <sval type="string" val=": Attacked by %s (action %s)"/>
+      <sval type="string" val=": Was attacked by %s during %s"/>
       <sval type="int" val="131074"/>
       <sval type="int" val="0"/>
       <sval type="int" val="131074"/>
+      <sval type="int" val="5"/>
+    </sval>
+    <sval type="array" size="37">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-1610609661"/>
+      <sval type="int" val="11"/>
+      <sval type="int" val="131074"/>
       <sval type="int" val="1"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="403"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="421"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="10"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="402"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="10"/>
+      <sval type="int" val="11"/>
+      <sval type="int" val="-1"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="-2"/>
+      <sval type="int" val="10"/>
+      <sval type="int" val="-4"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="-5"/>
+      <sval type="int" val="10"/>
+      <sval type="int" val="-8"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="-9"/>
+    </sval>
+    <sval type="array" size="18">
+      <sval type="int" val="102"/>
+      <sval type="string" val="wwsl.T2.function"/>
+      <sval type="int" val="-2147483647"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="591"/>
+      <sval type="int" val="5"/>
+      <sval type="string" val="Will skip processing because of current action"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="103"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="4">
+      <sval type="int" val="146"/>
+      <sval type="int" val="-1610607869"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="50"/>
+    </sval>
+    <sval type="array" size="18">
+      <sval type="int" val="102"/>
+      <sval type="string" val="wwsl.T2.function"/>
+      <sval type="int" val="-2147483647"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="591"/>
+      <sval type="int" val="5"/>
+      <sval type="string" val="Script with prio 50 is on stack"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="4">
+      <sval type="int" val="146"/>
+      <sval type="int" val="-536866300"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="51"/>
+    </sval>
+    <sval type="array" size="18">
+      <sval type="int" val="102"/>
+      <sval type="string" val="wwsl.T2.function"/>
+      <sval type="int" val="-2147483647"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="591"/>
+      <sval type="int" val="5"/>
+      <sval type="string" val="But script with prio 51 isn't on stack. Run defensive action"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="109"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="51"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="1167"/>
+      <sval type="int" val="50"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="103"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="6">
+      <sval type="int" val="619"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="9"/>
+      <sval type="int" val="1048611"/>
+    </sval>
+    <sval type="array" size="6">
+      <sval type="int" val="618"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="9"/>
+      <sval type="int" val="720896"/>
+    </sval>
+    <sval type="array" size="6">
+      <sval type="int" val="567"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="8"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="6"/>
+    </sval>
+    <sval type="array" size="19">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-1610606333"/>
+      <sval type="int" val="5"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="8"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="9"/>
+      <sval type="int" val="5"/>
+      <sval type="int" val="-1"/>
+      <sval type="int" val="9"/>
+      <sval type="int" val="-2"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="-3"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="1167"/>
+      <sval type="int" val="47"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="112"/>
+      <sval type="int" val="26"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="1167"/>
+      <sval type="int" val="27"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="103"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="101"/>
+      <sval type="string" val="tryToFlee"/>
+    </sval>
+    <sval type="array" size="13">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-1610604797"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="-1"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="-2"/>
+    </sval>
+    <sval type="array" size="6">
+      <sval type="int" val="110"/>
+      <sval type="int" val="9"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="5"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="11"/>
+    </sval>
+    <sval type="array" size="8">
+      <sval type="int" val="546"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="9"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="9"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="109"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="50"/>
+    </sval>
+    <sval type="array" size="25">
+      <sval type="int" val="104"/>
+      <sval type="int" val="10"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="131"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="110"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="109"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="106"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="-1"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="-2"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="-4"/>
+      <sval type="int" val="7"/>
+      <sval type="int" val="-6"/>
+    </sval>
+    <sval type="array" size="16">
+      <sval type="int" val="709"/>
+      <sval type="int" val="11"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="6"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="10"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="10"/>
+    </sval>
+    <sval type="array" size="7">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-1610601213"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="11"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="-1"/>
+    </sval>
+    <sval type="array" size="5">
+      <sval type="int" val="524"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="18"/>
+      <sval type="int" val="7"/>
+    </sval>
+    <sval type="array" size="5">
+      <sval type="int" val="519"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="11"/>
+    </sval>
+    <sval type="array" size="5">
+      <sval type="int" val="526"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="11"/>
     </sval>
     <sval type="array" size="10">
       <sval type="int" val="102"/>
-      <sval type="string" val="lib.ship.signal.attacked.trader"/>
-      <sval type="int" val="5"/>
+      <sval type="string" val="wwsl.T2.nav.move"/>
+      <sval type="int" val="-536860150"/>
       <sval type="int" val="131075"/>
       <sval type="int" val="1"/>
       <sval type="int" val="2"/>
       <sval type="int" val="131074"/>
+      <sval type="int" val="11"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="10">
+      <sval type="int" val="102"/>
+      <sval type="string" val="wwsl.T2.function1"/>
+      <sval type="int" val="-536860409"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="2"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="531"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="11"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="112"/>
+      <sval type="int" val="42"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="112"/>
+      <sval type="int" val="38"/>
+    </sval>
+    <sval type="array" size="13">
+      <sval type="int" val="104"/>
+      <sval type="int" val="-1610601213"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="11"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="11"/>
+      <sval type="int" val="15"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="3"/>
+      <sval type="int" val="-1"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="-2"/>
+    </sval>
+    <sval type="array" size="6">
+      <sval type="int" val="107"/>
+      <sval type="int" val="-2147483647"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="60000"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="120000"/>
+    </sval>
+    <sval type="array" size="1">
+      <sval type="int" val="1168"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="1167"/>
+      <sval type="int" val="55"/>
+    </sval>
+    <sval type="array" size="1">
+      <sval type="int" val="1168"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="101"/>
+      <sval type="string" val="tryToUseJD"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="1167"/>
+      <sval type="int" val="27"/>
+    </sval>
+    <sval type="array" size="1">
+      <sval type="int" val="1168"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="101"/>
+      <sval type="string" val="tryDefensiveAction"/>
+    </sval>
+    <sval type="array" size="6">
+      <sval type="int" val="110"/>
+      <sval type="int" val="9"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="20"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="60"/>
+    </sval>
+    <sval type="array" size="6">
+      <sval type="int" val="110"/>
+      <sval type="int" val="12"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="15000"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="40000"/>
+    </sval>
+    <sval type="array" size="12">
+      <sval type="int" val="565"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="-2147483647"/>
+      <sval type="int" val="0"/>
       <sval type="int" val="0"/>
       <sval type="int" val="131074"/>
+      <sval type="int" val="9"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="12"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="1">
+      <sval type="int" val="1168"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="101"/>
+      <sval type="string" val="tryLastChance"/>
+    </sval>
+    <sval type="array" size="4">
+      <sval type="int" val="706"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="-1610596855"/>
+    </sval>
+    <sval type="array" size="6">
+      <sval type="int" val="733"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="-536855801"/>
+      <sval type="int" val="131075"/>
       <sval type="int" val="1"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="112"/>
+      <sval type="int" val="62"/>
+    </sval>
+    <sval type="array" size="6">
+      <sval type="int" val="110"/>
+      <sval type="int" val="12"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="15000"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="40000"/>
+    </sval>
+    <sval type="array" size="12">
+      <sval type="int" val="565"/>
+      <sval type="int" val="131075"/>
+      <sval type="int" val="1"/>
+      <sval type="int" val="-2147483647"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="4"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="12"/>
+      <sval type="int" val="131074"/>
+      <sval type="int" val="0"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="112"/>
+      <sval type="int" val="56"/>
+    </sval>
+    <sval type="array" size="1">
+      <sval type="int" val="1168"/>
     </sval>
     <sval type="array" size="3">
       <sval type="int" val="103"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="5"/>
+      <sval type="int" val="0"/>
+      <sval type="int" val="0"/>
     </sval>
   </sval>
   <sval type="array" size="2">
@@ -117,9 +821,189 @@
       <sval type="string" val="Action"/>
     </sval>
   </sval>
-  <sval type="int" val="0"/>
+  <sval type="array" size="41">
+    <sval type="array" size="2">
+      <sval type="int" val="3"/>
+      <sval type="int" val="4"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="3"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="9"/>
+      <sval type="int" val="4"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="9"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="12"/>
+      <sval type="int" val="4"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="12"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="12"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="There are only two cases:"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="12"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="1 - if there is 50 prio then it is fleeing"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="12"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="2 - if there is 51 prio then it is making a defensive action"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="18"/>
+      <sval type="int" val="4"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="19"/>
+      <sval type="int" val="4"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="19"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="25"/>
+      <sval type="int" val="5"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="26"/>
+      <sval type="int" val="4"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="27"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="27"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="27"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="Cannot use JumpDrive"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="31"/>
+      <sval type="int" val="4"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="35"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="TODO: Inform player of situation: start moving to safe station"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="41"/>
+      <sval type="int" val="7"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="42"/>
+      <sval type="int" val="4"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="43"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="TODO: Wait for situation change"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="45"/>
+      <sval type="int" val="4"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="45"/>
+      <sval type="int" val="4"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="45"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="TODO: Inform player of situation: no safe station in range"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="45"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="Will do defensive maneuver continuously"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="45"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="Until enemy destroyed"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="47"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="47"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="48"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="TODO:"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="50"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="50"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="51"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="TODO: can fire Mosquito missile if attacker is a small ship"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="51"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="TODO: can analyze attacker speed and range"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="55"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="55"/>
+      <sval type="int" val="2"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="59"/>
+      <sval type="int" val="7"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="62"/>
+      <sval type="int" val="4"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="62"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="TODO: There is the case when we was saved thanks last chance!"/>
+    </sval>
+    <sval type="array" size="3">
+      <sval type="int" val="62"/>
+      <sval type="int" val="1"/>
+      <sval type="string" val="Very interesting message may be sent here"/>
+    </sval>
+    <sval type="array" size="2">
+      <sval type="int" val="63"/>
+      <sval type="int" val="2"/>
+    </sval>
+  </sval>
   <sval type="int" val="0"/>
 </sval>
 
 </codearray>
+<nosignature>6167</nosignature>
 </script>
