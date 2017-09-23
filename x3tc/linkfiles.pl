@@ -1,6 +1,15 @@
 #!/usr/bin/perl -w
 use File::Spec;
 
+my ($isWin, $separator);
+if ( $^O eq "MSWin32" ) {
+	$isWin = 1;
+	$separator = "\\";
+} else {
+	$isWin = 0;
+	$separator = "/";
+}
+
 if ( $#ARGV != 2 ) {
     usage();
     exit(1);
@@ -26,8 +35,8 @@ if ( ! -d $dst ) {
 if ( $option eq "make" ) {
     @files = get_files($src);
     foreach my $file ( @files ) {
-        my $newfile = "$dst/$file";
-        my $oldfile = "$src/$file";
+        my $newfile = $dst . $separator . $file;
+        my $oldfile = $src . $separator . $file;
         print "$newfile: ";
         if ( -l $newfile ) {
             my $pathto = readlink($newfile) or die "readlink failed: $!";
@@ -43,7 +52,15 @@ if ( $option eq "make" ) {
         } elsif ( -d $newfile ) {
             print "skip existing directory";
         } elsif ( ! -e $newfile ) {
-            symlink($oldfile, $newfile) or die "symlink failed: $!";
+			if ( $isWin ) {
+				my @dummyArgs = ("mklink", $newfile, $oldfile);
+				my $r = system(@dummyArgs);
+				if ( $r != 0 ) {
+					die "symlink failed: $!";
+				}
+			} else {
+            	symlink($oldfile, $newfile) or die "symlink failed: $!";
+			}
             print "created to $oldfile";
         } else {
             print "skip unknown file type";
@@ -79,6 +96,8 @@ sub usage {
     print
 "Usage:\n\n",
 "  $0 <option> <src> <dst>\n",
+"\n",
+"Note: To use it under Windows you have to run it under Administrator account\n",
 "\n",
 "Options:\n\n",
 "  make - for each file in <src> directory to make symlink with same name\n",
