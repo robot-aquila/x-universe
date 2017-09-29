@@ -11,9 +11,8 @@
 </arguments>
 <sourceplaintext>
 <![CDATA[
-  * TODO: Switch to use combat message logging
-  * At the moment it is a navigation log
-  $gLogFN=596
+  * Combat message logging function
+  $gLogFN=597
   * This is varname to mark the ship is on the Safe Point 2
   $gVarSP2='wwsl.T2.attacked.isSP2'
   * This is varname to select a fleing phase at start.
@@ -519,9 +518,8 @@
 ]]>
 </sourceplaintext>
 <sourcetext>
-<line indent=""><comment><text>*&#160;</text><var>TODO:&#160;Switch&#160;to&#160;use&#160;combat&#160;message&#160;logging</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>At&#160;the&#160;moment&#160;it&#160;is&#160;a&#160;navigation&#160;log</var></comment></line>
-<line indent=""><var>$gLogFN=</var><var>596</var></line>
+<line indent=""><comment><text>*&#160;</text><var>Combat&#160;message&#160;logging&#160;function</var></comment></line>
+<line indent=""><var>$gLogFN=</var><var>597</var></line>
 <line indent=""><comment><text>*&#160;</text><var>This&#160;is&#160;varname&#160;to&#160;mark&#160;the&#160;ship&#160;is&#160;on&#160;the&#160;Safe&#160;Point&#160;2</var></comment></line>
 <line indent=""><var>$gVarSP2=</var><var>'wwsl.T2.attacked.isSP2'</var></line>
 <line indent=""><comment><text>*&#160;</text><var>This&#160;is&#160;varname&#160;to&#160;select&#160;a&#160;fleing&#160;phase&#160;at&#160;start.</var></comment></line>
@@ -1084,7 +1082,7 @@
       <sval type="int" val="2"/>
       <sval type="int" val="1"/>
       <sval type="int" val="4"/>
-      <sval type="int" val="596"/>
+      <sval type="int" val="597"/>
       <sval type="int" val="1"/>
       <sval type="int" val="-1"/>
     </sval>
@@ -4288,16 +4286,11 @@
       <sval type="string" val="Action"/>
     </sval>
   </sval>
-  <sval type="array" size="153">
+  <sval type="array" size="152">
     <sval type="array" size="3">
       <sval type="int" val="0"/>
       <sval type="int" val="1"/>
-      <sval type="string" val="TODO: Switch to use combat message logging"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="0"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="At the moment it is a navigation log"/>
+      <sval type="string" val="Combat message logging function"/>
     </sval>
     <sval type="array" size="3">
       <sval type="int" val="1"/>
@@ -4972,5 +4965,5 @@
 </sval>
 
 </codearray>
-<nosignature>8976</nosignature>
+<nosignature>3883</nosignature>
 </script>
