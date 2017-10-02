@@ -516,6 +516,10 @@
 	<t id="39000">:НАВ: Reserved</t>
 	<t id="39001">:НАВ: Попытка прыжка к %s сектора %s с результатом: %s</t><!-- deprecated -->
 
+	<!-- Validation log message templates -->
+	<!-- Used from counter agent validation -->
+	<t id="40001">:ВАЛ: Результат: %s Маска: %s Валидатор:%s Контрагент: %s</t>
+
 
 </page>
 <page id="2010" title="T2 commands" descr="">
