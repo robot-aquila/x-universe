@@ -518,7 +518,7 @@
 
 	<!-- Validation log message templates -->
 	<!-- Used from counter agent validation -->
-	<t id="40001">:ВАЛ: Результат: %s Маска: %s Валидатор: %s Контрагент: %s</t>
+	<t id="40001">:ВАЛ: Рез:%s Мск:%04s Вал:%03s Ктр:%s</t>
 
 
 </page>
