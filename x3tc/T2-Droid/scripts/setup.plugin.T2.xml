@@ -1,1338 +1,2236 @@
-<?xml version="1.0" standalone="yes" ?>
-<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<?xml version="1.0" standalone="yes"?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl"?>
+<!-- Generated using X-Studio -->
 <script>
-<name>setup.plugin.T2</name>
-<version>301</version>
-<engineversion>54</engineversion>
-<description>T2: System - Setup plugin</description>
-<arguments>
-<argument index="1" name="uninstall" type="Var/Boolean" desc="Uninstall ?" />
-</arguments>
-<sourceplaintext>
-<![CDATA[
-  $T2.PageID=8370
-  load text: id=$T2.PageID
-  
-  $cmd=COMMAND_TYPE_TRADE_58
-  $T2.Config=get global variable: name='wwsl.T2.global'
-  if notis datatype[ $T2.Config ] == DATATYPE_ARRAY
-    $T2.Config=array alloc: size=0
-    set global variable: name='wwsl.T2.global' value=$T2.Config
-  end
-  resize array $T2.Config to 9
-  * Configuration:
-  * 0 - Version
-  * 1 - Hotkey ID
-  * 2 - Array of Program -> Ship index
-  * 3 - Global menu opened?
-  * 4 - Debug options. See subsystem codes below:
-  *     1 - enable navigator logging
-  *     2 - enable setup/update logging
-  *     4 - enable additional debug actions/options
-  *     8 - enable trade logging
-  *     16 - enable contragent validation logging
-  *     32 - enable logging of signal handling
-  *     64 - enable logging of function calls
-  *     128 - enable combat message logging
-  * 5 - Array of exclude patterns of name for ship searching
-  * 6 - Last ship number
-  * 7 - Period to clean log (days)
-  * 8 - Log was cleared last time (seconds)
-  
-  if$uninstall
-    gosub Uninstall
-  else
-    gosub Install
-  end
-  return [TRUE]
-  
-  Update.Program2Ship:
-  $Dummy.TopCache=array alloc: size=0
-@ $Dummy.Index=[THIS] -> call script wwsl.T2.function0 :  #Fn=51
-  while$Dummy.Index > 0
-    dec $Dummy.Index=
-    $Dummy=array alloc: size=0
-    append $Dummy to array $Dummy.TopCache
-  end
-  * Build cache
-  $Dummy.List= get ship array: of race Player class/type=null
-  $Dummy.Index=size of array $Dummy.List
-  while$Dummy.Index > 0
-    dec $Dummy.Index=
-    $Dummy=$Dummy.List[$Dummy.Index]
-    $Dummy2=$Dummy -> get local variable: name='wwsl.T2.config'
-    skip ifis datatype[ $Dummy2 ] == DATATYPE_ARRAY
-      continue
-    $Dummy.Program=$Dummy2[1]
-    $Dummy.Cache=$Dummy.TopCache[$Dummy.Program]
-    append $Dummy to array $Dummy.Cache
-  end
-  $T2.Config[2] = $Dummy.TopCache
-  $Dummy.Flags=$T2.Config[4]
-  skip if2 & $Dummy.Flags
-    endsub
-  $Dummy.Index=size of array $Dummy.TopCache
-  write to log file #$T2.PageID  append=[TRUE]  printf: fmt='Total programs: %s', $Dummy.Index, null, null, null, null
-  while$Dummy.Index > 0
-    dec $Dummy.Index=
-    $Dummy=$Dummy.TopCache[$Dummy.Index]
-    $Dummy=size of array $Dummy
-    write to log file #$T2.PageID  append=[TRUE]  printf: fmt='    Program #%s cache size: %s', $Dummy.Index, $Dummy, null, null, null
-  end
-  endsub
-  
-  Install:
-  gosub Install.CheckVersion
-  gosub Install.CheckConfig
-  gosub Update.Program2Ship
-  gosub Install.Cmd
-  gosub Install.Hotkey
-  endsub
-  
-  Uninstall:
-  gosub Stop.Ships
-  gosub Uninstall.Cmd
-  gosub Uninstall.Hotkey
-  gosub Clear.GlobalVars
-  endsub
-  
-  Stop.Ships:
-  * TODO:
-  endsub
-  
-  Install.CheckConfig:
-  $Dummy=$T2.Config[4]
-  skip ifis datatype[ $Dummy ] == DATATYPE_INT
-    $T2.Config[4] = 0
-  $Dummy=$T2.Config[5]
-  if notis datatype[ $Dummy ] == DATATYPE_ARRAY
-    $Dummy=array alloc: size=0
-    $T2.Config[5] = $Dummy
-  end
-  $Dummy=$T2.Config[6]
-  if notis datatype[ $Dummy ] == DATATYPE_INT
-    $Dummy=get global variable: name='wwsl.T2.LastShipNumber'
-    if$Dummy
-      set global variable: name='wwsl.T2.LastShipNumber' value=null
-    else
-      $Dummy=0
-    end
-    $T2.Config[6] = $Dummy
-  end
-  $Dummy=$T2.Config[7]
-  skip ifis datatype[ $Dummy ] == DATATYPE_INT
-    $T2.Config[7] = 3
-  $Dummy=$T2.Config[8]
-  skip ifis datatype[ $Dummy ] == DATATYPE_INT
-    $T2.Config[8] = 0
-  endsub
-  
-  Install.CheckVersion:
-  $Dummy=$T2.Config[0]
-  skip if$Dummy == '3.01'
-    $T2.Config[0] = '3.01'
-  endsub
-  
-  Install.Cmd:
-  set script command upgrade: command=$cmd  upgrade=[TRUE]
-  set ship command preload script: command=$cmd script=wwsl.T2.shipmenu
-  global script map: set: key=$cmd, class=Корабль, race=Player, script=wwsl.T2.run, prio=0
-  endsub
-  
-  Uninstall.Cmd:
-  global script map: remove: key=$cmd, class=Корабль, race=Player
-  endsub
-  
-  Install.Hotkey:
-  if not$T2.Config[1]
-    $Dummy=read text: page=$T2.PageID id=999
-    $Dummy=register hotkey $Dummy to call script wwsl.T2.globalmenu
-    $T2.Config[1] = $Dummy
-  end
-  endsub
-  
-  Uninstall.Hotkey:
-  $Dummy=$T2.Config[1]
-  if$Dummy
-    unregister hotkey $Dummy
-    $T2.Config[1] = null
-  end
-  endsub
-  
-  Clear.GlobalVars:
-  set global variable: name='wwsl.T2.LastShipNumber' value=null
-  set global variable: name='wwsl.T2.global' value=null
-  endsub
-  
-  return null
-]]>
-</sourceplaintext>
-<sourcetext>
-<line indent=""><var>$T2.PageID=</var><var>8370</var></line>
-<line indent=""><text>load&#160;text:&#160;id=</text><var>$T2.PageID</var></line>
-<line indent=""></line>
-<line indent=""><var>$cmd=</var><var>COMMAND_TYPE_TRADE_58</var></line>
-<line indent=""><var>$T2.Config=</var><text>get&#160;global&#160;variable:&#160;name=</text><var>'wwsl.T2.global'</var></line>
-<line indent=""><var>if&#160;not</var><text>is&#160;datatype[&#160;</text><var>$T2.Config</var><text>&#160;]&#160;==&#160;</text><var>DATATYPE_ARRAY</var></line>
-<line indent="&#160;"><var>$T2.Config=</var><text>array&#160;alloc:&#160;size=</text><var>0</var></line>
-<line indent="&#160;"><text>set&#160;global&#160;variable:&#160;name=</text><var>'wwsl.T2.global'</var><text>&#160;value=</text><var>$T2.Config</var></line>
-<line indent=""><text>end</text></line>
-<line indent=""><text>resize&#160;array&#160;</text><var>$T2.Config</var><text>&#160;to&#160;</text><var>9</var></line>
-<line indent=""><comment><text>*&#160;</text><var>Configuration:</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>0&#160;-&#160;Version</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>1&#160;-&#160;Hotkey&#160;ID</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>2&#160;-&#160;Array&#160;of&#160;Program&#160;-&gt;&#160;Ship&#160;index</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>3&#160;-&#160;Global&#160;menu&#160;opened?</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>4&#160;-&#160;Debug&#160;options.&#160;See&#160;subsystem&#160;codes&#160;below:</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>&#160;&#160;&#160;&#160;1&#160;-&#160;enable&#160;navigator&#160;logging</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>&#160;&#160;&#160;&#160;2&#160;-&#160;enable&#160;setup/update&#160;logging</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>&#160;&#160;&#160;&#160;4&#160;-&#160;enable&#160;additional&#160;debug&#160;actions/options</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>&#160;&#160;&#160;&#160;8&#160;-&#160;enable&#160;trade&#160;logging</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>&#160;&#160;&#160;&#160;16&#160;-&#160;enable&#160;contragent&#160;validation&#160;logging</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>&#160;&#160;&#160;&#160;32&#160;-&#160;enable&#160;logging&#160;of&#160;signal&#160;handling</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>&#160;&#160;&#160;&#160;64&#160;-&#160;enable&#160;logging&#160;of&#160;function&#160;calls</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>&#160;&#160;&#160;&#160;128&#160;-&#160;enable&#160;combat&#160;message&#160;logging</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>5&#160;-&#160;Array&#160;of&#160;exclude&#160;patterns&#160;of&#160;name&#160;for&#160;ship&#160;searching</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>6&#160;-&#160;Last&#160;ship&#160;number</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>7&#160;-&#160;Period&#160;to&#160;clean&#160;log&#160;(days)</var></comment></line>
-<line indent=""><comment><text>*&#160;</text><var>8&#160;-&#160;Log&#160;was&#160;cleared&#160;last&#160;time&#160;(seconds)</var></comment></line>
-<line indent=""></line>
-<line indent=""><var>if</var><var>$uninstall</var></line>
-<line indent="&#160;"><text>gosub&#160;</text><var>Uninstall</var></line>
-<line indent=""><text>else</text></line>
-<line indent="&#160;"><text>gosub&#160;</text><var>Install</var></line>
-<line indent=""><text>end</text></line>
-<line indent=""><text>return&#160;</text><var>[TRUE]</var></line>
-<line indent=""></line>
-<line indent=""><var>Update.Program2Ship</var><text>:</text></line>
-<line indent=""><var>$Dummy.TopCache=</var><text>array&#160;alloc:&#160;size=</text><var>0</var></line>
-<line interruptable="@" indent=""><var>$Dummy.Index=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function0</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>51</var></line>
-<line indent=""><var>while</var><var>$Dummy.Index</var><text>&#160;</text><var>&gt;</var><text>&#160;</text><var>0</var></line>
-<line indent="&#160;"><text>dec&#160;</text><var>$Dummy.Index=</var></line>
-<line indent="&#160;"><var>$Dummy=</var><text>array&#160;alloc:&#160;size=</text><var>0</var></line>
-<line indent="&#160;"><text>append&#160;</text><var>$Dummy</var><text>&#160;to&#160;array&#160;</text><var>$Dummy.TopCache</var></line>
-<line indent=""><text>end</text></line>
-<line indent=""><comment><text>*&#160;</text><var>Build&#160;cache</var></comment></line>
-<line indent=""><var>$Dummy.List=</var><text>&#160;get&#160;ship&#160;array:&#160;of&#160;race&#160;</text><var>Player</var><text>&#160;class/type=</text><var>null</var></line>
-<line indent=""><var>$Dummy.Index=</var><text>size&#160;of&#160;array&#160;</text><var>$Dummy.List</var></line>
-<line indent=""><var>while</var><var>$Dummy.Index</var><text>&#160;</text><var>&gt;</var><text>&#160;</text><var>0</var></line>
-<line indent="&#160;"><text>dec&#160;</text><var>$Dummy.Index=</var></line>
-<line indent="&#160;"><var>$Dummy=</var><var>$Dummy.List</var><text>[</text><var>$Dummy.Index</var><text>]</text></line>
-<line indent="&#160;"><var>$Dummy2=</var><var>$Dummy&#160;-&gt;</var><text>&#160;get&#160;local&#160;variable:&#160;name=</text><var>'wwsl.T2.config'</var></line>
-<line indent="&#160;"><var>skip&#160;if</var><text>is&#160;datatype[&#160;</text><var>$Dummy2</var><text>&#160;]&#160;==&#160;</text><var>DATATYPE_ARRAY</var></line>
-<line indent="&#160;&#160;"><text>continue</text></line>
-<line indent="&#160;"><var>$Dummy.Program=</var><var>$Dummy2</var><text>[</text><var>1</var><text>]</text></line>
-<line indent="&#160;"><var>$Dummy.Cache=</var><var>$Dummy.TopCache</var><text>[</text><var>$Dummy.Program</var><text>]</text></line>
-<line indent="&#160;"><text>append&#160;</text><var>$Dummy</var><text>&#160;to&#160;array&#160;</text><var>$Dummy.Cache</var></line>
-<line indent=""><text>end</text></line>
-<line indent=""><var>$T2.Config</var><text>[</text><var>2</var><text>]&#160;=&#160;</text><var>$Dummy.TopCache</var></line>
-<line indent=""><var>$Dummy.Flags=</var><var>$T2.Config</var><text>[</text><var>4</var><text>]</text></line>
-<line indent=""><var>skip&#160;if</var><var>2</var><text>&#160;</text><var>&amp;</var><text>&#160;</text><var>$Dummy.Flags</var></line>
-<line indent="&#160;"><text>endsub</text></line>
-<line indent=""><var>$Dummy.Index=</var><text>size&#160;of&#160;array&#160;</text><var>$Dummy.TopCache</var></line>
-<line indent=""><text>write&#160;to&#160;log&#160;file&#160;#</text><var>$T2.PageID</var><text>&#160;&#160;append=</text><var>[TRUE]</var><text>&#160;&#160;printf:&#160;fmt=</text><var>'Total&#160;programs:&#160;%s'</var><text>,&#160;</text><var>$Dummy.Index</var><text>,&#160;</text><var>null</var><text>,&#160;</text><var>null</var><text>,&#160;</text><var>null</var><text>,&#160;</text><var>null</var></line>
-<line indent=""><var>while</var><var>$Dummy.Index</var><text>&#160;</text><var>&gt;</var><text>&#160;</text><var>0</var></line>
-<line indent="&#160;"><text>dec&#160;</text><var>$Dummy.Index=</var></line>
-<line indent="&#160;"><var>$Dummy=</var><var>$Dummy.TopCache</var><text>[</text><var>$Dummy.Index</var><text>]</text></line>
-<line indent="&#160;"><var>$Dummy=</var><text>size&#160;of&#160;array&#160;</text><var>$Dummy</var></line>
-<line indent="&#160;"><text>write&#160;to&#160;log&#160;file&#160;#</text><var>$T2.PageID</var><text>&#160;&#160;append=</text><var>[TRUE]</var><text>&#160;&#160;printf:&#160;fmt=</text><var>'&#160;&#160;&#160;&#160;Program&#160;#%s&#160;cache&#160;size:&#160;%s'</var><text>,&#160;</text><var>$Dummy.Index</var><text>,&#160;</text><var>$Dummy</var><text>,&#160;</text><var>null</var><text>,&#160;</text><var>null</var><text>,&#160;</text><var>null</var></line>
-<line indent=""><text>end</text></line>
-<line indent=""><text>endsub</text></line>
-<line indent=""></line>
-<line indent=""><var>Install</var><text>:</text></line>
-<line indent=""><text>gosub&#160;</text><var>Install.CheckVersion</var></line>
-<line indent=""><text>gosub&#160;</text><var>Install.CheckConfig</var></line>
-<line indent=""><text>gosub&#160;</text><var>Update.Program2Ship</var></line>
-<line indent=""><text>gosub&#160;</text><var>Install.Cmd</var></line>
-<line indent=""><text>gosub&#160;</text><var>Install.Hotkey</var></line>
-<line indent=""><text>endsub</text></line>
-<line indent=""></line>
-<line indent=""><var>Uninstall</var><text>:</text></line>
-<line indent=""><text>gosub&#160;</text><var>Stop.Ships</var></line>
-<line indent=""><text>gosub&#160;</text><var>Uninstall.Cmd</var></line>
-<line indent=""><text>gosub&#160;</text><var>Uninstall.Hotkey</var></line>
-<line indent=""><text>gosub&#160;</text><var>Clear.GlobalVars</var></line>
-<line indent=""><text>endsub</text></line>
-<line indent=""></line>
-<line indent=""><var>Stop.Ships</var><text>:</text></line>
-<line indent=""><comment><text>*&#160;</text><var>TODO:</var></comment></line>
-<line indent=""><text>endsub</text></line>
-<line indent=""></line>
-<line indent=""><var>Install.CheckConfig</var><text>:</text></line>
-<line indent=""><var>$Dummy=</var><var>$T2.Config</var><text>[</text><var>4</var><text>]</text></line>
-<line indent=""><var>skip&#160;if</var><text>is&#160;datatype[&#160;</text><var>$Dummy</var><text>&#160;]&#160;==&#160;</text><var>DATATYPE_INT</var></line>
-<line indent="&#160;"><var>$T2.Config</var><text>[</text><var>4</var><text>]&#160;=&#160;</text><var>0</var></line>
-<line indent=""><var>$Dummy=</var><var>$T2.Config</var><text>[</text><var>5</var><text>]</text></line>
-<line indent=""><var>if&#160;not</var><text>is&#160;datatype[&#160;</text><var>$Dummy</var><text>&#160;]&#160;==&#160;</text><var>DATATYPE_ARRAY</var></line>
-<line indent="&#160;"><var>$Dummy=</var><text>array&#160;alloc:&#160;size=</text><var>0</var></line>
-<line indent="&#160;"><var>$T2.Config</var><text>[</text><var>5</var><text>]&#160;=&#160;</text><var>$Dummy</var></line>
-<line indent=""><text>end</text></line>
-<line indent=""><var>$Dummy=</var><var>$T2.Config</var><text>[</text><var>6</var><text>]</text></line>
-<line indent=""><var>if&#160;not</var><text>is&#160;datatype[&#160;</text><var>$Dummy</var><text>&#160;]&#160;==&#160;</text><var>DATATYPE_INT</var></line>
-<line indent="&#160;"><var>$Dummy=</var><text>get&#160;global&#160;variable:&#160;name=</text><var>'wwsl.T2.LastShipNumber'</var></line>
-<line indent="&#160;"><var>if</var><var>$Dummy</var></line>
-<line indent="&#160;&#160;"><text>set&#160;global&#160;variable:&#160;name=</text><var>'wwsl.T2.LastShipNumber'</var><text>&#160;value=</text><var>null</var></line>
-<line indent="&#160;"><text>else</text></line>
-<line indent="&#160;&#160;"><var>$Dummy=</var><var>0</var></line>
-<line indent="&#160;"><text>end</text></line>
-<line indent="&#160;"><var>$T2.Config</var><text>[</text><var>6</var><text>]&#160;=&#160;</text><var>$Dummy</var></line>
-<line indent=""><text>end</text></line>
-<line indent=""><var>$Dummy=</var><var>$T2.Config</var><text>[</text><var>7</var><text>]</text></line>
-<line indent=""><var>skip&#160;if</var><text>is&#160;datatype[&#160;</text><var>$Dummy</var><text>&#160;]&#160;==&#160;</text><var>DATATYPE_INT</var></line>
-<line indent="&#160;"><var>$T2.Config</var><text>[</text><var>7</var><text>]&#160;=&#160;</text><var>3</var></line>
-<line indent=""><var>$Dummy=</var><var>$T2.Config</var><text>[</text><var>8</var><text>]</text></line>
-<line indent=""><var>skip&#160;if</var><text>is&#160;datatype[&#160;</text><var>$Dummy</var><text>&#160;]&#160;==&#160;</text><var>DATATYPE_INT</var></line>
-<line indent="&#160;"><var>$T2.Config</var><text>[</text><var>8</var><text>]&#160;=&#160;</text><var>0</var></line>
-<line indent=""><text>endsub</text></line>
-<line indent=""></line>
-<line indent=""><var>Install.CheckVersion</var><text>:</text></line>
-<line indent=""><var>$Dummy=</var><var>$T2.Config</var><text>[</text><var>0</var><text>]</text></line>
-<line indent=""><var>skip&#160;if</var><var>$Dummy</var><text>&#160;</text><var>==</var><text>&#160;</text><var>'3.01'</var></line>
-<line indent="&#160;"><var>$T2.Config</var><text>[</text><var>0</var><text>]&#160;=&#160;</text><var>'3.01'</var></line>
-<line indent=""><text>endsub</text></line>
-<line indent=""></line>
-<line indent=""><var>Install.Cmd</var><text>:</text></line>
-<line indent=""><text>set&#160;script&#160;command&#160;upgrade:&#160;command=</text><var>$cmd</var><text>&#160;&#160;upgrade=</text><var>[TRUE]</var></line>
-<line indent=""><text>set&#160;ship&#160;command&#160;preload&#160;script:&#160;command=</text><var>$cmd</var><text>&#160;script=</text><call>wwsl.T2.shipmenu</call></line>
-<line indent=""><text>global&#160;script&#160;map:&#160;set:&#160;key=</text><var>$cmd</var><text>,&#160;class=</text><var>Корабль</var><text>,&#160;race=</text><var>Player</var><text>,&#160;script=</text><call>wwsl.T2.run</call><text>,&#160;prio=</text><var>0</var></line>
-<line indent=""><text>endsub</text></line>
-<line indent=""></line>
-<line indent=""><var>Uninstall.Cmd</var><text>:</text></line>
-<line indent=""><text>global&#160;script&#160;map:&#160;remove:&#160;key=</text><var>$cmd</var><text>,&#160;class=</text><var>Корабль</var><text>,&#160;race=</text><var>Player</var></line>
-<line indent=""><text>endsub</text></line>
-<line indent=""></line>
-<line indent=""><var>Install.Hotkey</var><text>:</text></line>
-<line indent=""><var>if&#160;not</var><var>$T2.Config</var><text>[</text><var>1</var><text>]</text></line>
-<line indent="&#160;"><var>$Dummy=</var><text>read&#160;text:&#160;page=</text><var>$T2.PageID</var><text>&#160;id=</text><var>999</var></line>
-<line indent="&#160;"><var>$Dummy=</var><text>register&#160;hotkey&#160;</text><var>$Dummy</var><text>&#160;to&#160;call&#160;script&#160;</text><call>wwsl.T2.globalmenu</call></line>
-<line indent="&#160;"><var>$T2.Config</var><text>[</text><var>1</var><text>]&#160;=&#160;</text><var>$Dummy</var></line>
-<line indent=""><text>end</text></line>
-<line indent=""><text>endsub</text></line>
-<line indent=""></line>
-<line indent=""><var>Uninstall.Hotkey</var><text>:</text></line>
-<line indent=""><var>$Dummy=</var><var>$T2.Config</var><text>[</text><var>1</var><text>]</text></line>
-<line indent=""><var>if</var><var>$Dummy</var></line>
-<line indent="&#160;"><text>unregister&#160;hotkey&#160;</text><var>$Dummy</var></line>
-<line indent="&#160;"><var>$T2.Config</var><text>[</text><var>1</var><text>]&#160;=&#160;</text><var>null</var></line>
-<line indent=""><text>end</text></line>
-<line indent=""><text>endsub</text></line>
-<line indent=""></line>
-<line indent=""><var>Clear.GlobalVars</var><text>:</text></line>
-<line indent=""><text>set&#160;global&#160;variable:&#160;name=</text><var>'wwsl.T2.LastShipNumber'</var><text>&#160;value=</text><var>null</var></line>
-<line indent=""><text>set&#160;global&#160;variable:&#160;name=</text><var>'wwsl.T2.global'</var><text>&#160;value=</text><var>null</var></line>
-<line indent=""><text>endsub</text></line>
-<line indent=""></line>
-<line indent=""><text>return&#160;</text><var>null</var></line>
-</sourcetext>
-<codearray>
-
-<sval type="array" size="10">
-  <sval type="string" val="setup.plugin.T2"/>
-  <sval type="int" val="54"/>
-  <sval type="string" val="T2: System - Setup plugin"/>
-  <sval type="int" val="301"/>
-  <sval type="int" val="0"/>
-  <sval type="array" size="12">
-    <sval type="string" val="uninstall"/>
-    <sval type="string" val="T2.PageID"/>
-    <sval type="string" val="cmd"/>
-    <sval type="string" val="T2.Config"/>
-    <sval type="string" val="Dummy.TopCache"/>
-    <sval type="string" val="Dummy.Index"/>
-    <sval type="string" val="Dummy"/>
-    <sval type="string" val="Dummy.List"/>
-    <sval type="string" val="Dummy2"/>
-    <sval type="string" val="Dummy.Program"/>
-    <sval type="string" val="Dummy.Cache"/>
-    <sval type="string" val="Dummy.Flags"/>
-  </sval>
-  <sval type="array" size="114">
-    <sval type="array" size="7">
-      <sval type="int" val="104"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="8370"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="-1"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="151"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="1"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="104"/>
-      <sval type="int" val="2"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="18"/>
-      <sval type="int" val="458"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="-1"/>
-    </sval>
-    <sval type="array" size="4">
-      <sval type="int" val="158"/>
-      <sval type="int" val="5"/>
-      <sval type="string" val="wwsl.T2.global"/>
-      <sval type="int" val="3"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="125"/>
-      <sval type="int" val="-536869116"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="20"/>
-      <sval type="int" val="21"/>
-    </sval>
-    <sval type="array" size="4">
-      <sval type="int" val="128"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="5">
-      <sval type="int" val="157"/>
-      <sval type="int" val="5"/>
-      <sval type="string" val="wwsl.T2.global"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-    </sval>
-    <sval type="array" size="5">
-      <sval type="int" val="137"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="9"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="104"/>
-      <sval type="int" val="-1610609917"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="-1"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="1167"/>
-      <sval type="int" val="53"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="112"/>
-      <sval type="int" val="12"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="1167"/>
-      <sval type="int" val="46"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="103"/>
-      <sval type="int" val="131075"/>
-      <sval type="int" val="10"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="101"/>
-      <sval type="string" val="Update.Program2Ship"/>
-    </sval>
-    <sval type="array" size="4">
-      <sval type="int" val="128"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="8">
-      <sval type="int" val="102"/>
-      <sval type="string" val="wwsl.T2.function0"/>
-      <sval type="int" val="5"/>
-      <sval type="int" val="131075"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="51"/>
-    </sval>
-    <sval type="array" size="13">
-      <sval type="int" val="104"/>
-      <sval type="int" val="-1610607351"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="5"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="15"/>
-      <sval type="int" val="2"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="-1"/>
-      <sval type="int" val="2"/>
-      <sval type="int" val="-2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="143"/>
-      <sval type="int" val="5"/>
-    </sval>
-    <sval type="array" size="4">
-      <sval type="int" val="128"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="5">
-      <sval type="int" val="135"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="112"/>
-      <sval type="int" val="16"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="1068"/>
-      <sval type="int" val="10"/>
-      <sval type="int" val="10"/>
-      <sval type="int" val="7"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="4">
-      <sval type="int" val="131"/>
-      <sval type="int" val="5"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="7"/>
-    </sval>
-    <sval type="array" size="13">
-      <sval type="int" val="104"/>
-      <sval type="int" val="-1610604279"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="5"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="15"/>
-      <sval type="int" val="2"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="-1"/>
-      <sval type="int" val="2"/>
-      <sval type="int" val="-2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="143"/>
-      <sval type="int" val="5"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="129"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="7"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="5"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="156"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="5"/>
-      <sval type="string" val="wwsl.T2.config"/>
-      <sval type="int" val="8"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="125"/>
-      <sval type="int" val="-536863481"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="8"/>
-      <sval type="int" val="20"/>
-      <sval type="int" val="21"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="112"/>
-      <sval type="int" val="23"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="129"/>
-      <sval type="int" val="9"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="8"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="1"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="129"/>
-      <sval type="int" val="10"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="9"/>
-    </sval>
-    <sval type="array" size="5">
-      <sval type="int" val="135"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="10"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="112"/>
-      <sval type="int" val="23"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="130"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="2"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="129"/>
-      <sval type="int" val="11"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="13">
-      <sval type="int" val="104"/>
-      <sval type="int" val="-536861433"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="2"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="11"/>
-      <sval type="int" val="15"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="-1"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="-2"/>
-    </sval>
-    <sval type="array" size="1">
-      <sval type="int" val="1168"/>
-    </sval>
-    <sval type="array" size="4">
-      <sval type="int" val="131"/>
-      <sval type="int" val="5"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="17">
-      <sval type="int" val="405"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="131075"/>
-      <sval type="int" val="10"/>
-      <sval type="int" val="5"/>
-      <sval type="string" val="Total programs: %s"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="5"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="13">
-      <sval type="int" val="104"/>
-      <sval type="int" val="-1610601207"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="5"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="15"/>
-      <sval type="int" val="2"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="-1"/>
-      <sval type="int" val="2"/>
-      <sval type="int" val="-2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="143"/>
-      <sval type="int" val="5"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="129"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="5"/>
-    </sval>
-    <sval type="array" size="4">
-      <sval type="int" val="131"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-    </sval>
-    <sval type="array" size="17">
-      <sval type="int" val="405"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="131075"/>
-      <sval type="int" val="10"/>
-      <sval type="int" val="5"/>
-      <sval type="string" val="    Program #%s cache size: %s"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="5"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="112"/>
-      <sval type="int" val="39"/>
-    </sval>
-    <sval type="array" size="1">
-      <sval type="int" val="1168"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="101"/>
-      <sval type="string" val="Install"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="1167"/>
-      <sval type="int" val="84"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="1167"/>
-      <sval type="int" val="61"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="1167"/>
-      <sval type="int" val="13"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="1167"/>
-      <sval type="int" val="89"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="1167"/>
-      <sval type="int" val="97"/>
-    </sval>
-    <sval type="array" size="1">
-      <sval type="int" val="1168"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="101"/>
-      <sval type="string" val="Uninstall"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="1167"/>
-      <sval type="int" val="59"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="1167"/>
-      <sval type="int" val="94"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="1167"/>
-      <sval type="int" val="103"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="1167"/>
-      <sval type="int" val="109"/>
-    </sval>
-    <sval type="array" size="1">
-      <sval type="int" val="1168"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="101"/>
-      <sval type="string" val="Stop.Ships"/>
-    </sval>
-    <sval type="array" size="1">
-      <sval type="int" val="1168"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="101"/>
-      <sval type="string" val="Install.CheckConfig"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="129"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="125"/>
-      <sval type="int" val="-536854265"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="20"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="130"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="129"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="5"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="125"/>
-      <sval type="int" val="-536853244"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="20"/>
-      <sval type="int" val="21"/>
-    </sval>
-    <sval type="array" size="4">
-      <sval type="int" val="128"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="130"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="5"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="129"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="6"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="125"/>
-      <sval type="int" val="-536851196"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="20"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="4">
-      <sval type="int" val="158"/>
-      <sval type="int" val="5"/>
-      <sval type="string" val="wwsl.T2.LastShipNumber"/>
-      <sval type="int" val="6"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="104"/>
-      <sval type="int" val="-1610593533"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="-1"/>
-    </sval>
-    <sval type="array" size="5">
-      <sval type="int" val="157"/>
-      <sval type="int" val="5"/>
-      <sval type="string" val="wwsl.T2.LastShipNumber"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="112"/>
-      <sval type="int" val="76"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="104"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="-1"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="130"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="129"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="7"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="125"/>
-      <sval type="int" val="-536850425"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="20"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="130"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="7"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="3"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="129"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="8"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="125"/>
-      <sval type="int" val="-536849657"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="20"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="130"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="8"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="1">
-      <sval type="int" val="1168"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="101"/>
-      <sval type="string" val="Install.CheckVersion"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="129"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="13">
-      <sval type="int" val="104"/>
-      <sval type="int" val="-536848377"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="5"/>
-      <sval type="string" val="3.01"/>
-      <sval type="int" val="15"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="-1"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="-2"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="130"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="5"/>
-      <sval type="string" val="3.01"/>
-    </sval>
-    <sval type="array" size="1">
-      <sval type="int" val="1168"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="101"/>
-      <sval type="string" val="Install.Cmd"/>
-    </sval>
-    <sval type="array" size="5">
-      <sval type="int" val="144"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="2"/>
-      <sval type="int" val="131075"/>
-      <sval type="int" val="10"/>
-    </sval>
-    <sval type="array" size="4">
-      <sval type="int" val="1466"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="2"/>
-      <sval type="string" val="wwsl.T2.shipmenu"/>
-    </sval>
-    <sval type="array" size="10">
-      <sval type="int" val="118"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="2"/>
-      <sval type="string" val="wwsl.T2.run"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="12"/>
-      <sval type="int" val="2004"/>
-      <sval type="int" val="10"/>
-      <sval type="int" val="10"/>
-    </sval>
-    <sval type="array" size="1">
-      <sval type="int" val="1168"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="101"/>
-      <sval type="string" val="Uninstall.Cmd"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="119"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="2"/>
-      <sval type="int" val="12"/>
-      <sval type="int" val="2004"/>
-      <sval type="int" val="10"/>
-      <sval type="int" val="10"/>
-    </sval>
-    <sval type="array" size="1">
-      <sval type="int" val="1168"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="101"/>
-      <sval type="string" val="Install.Hotkey"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="129"/>
-      <sval type="int" val="-536844796"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="1"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="126"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="999"/>
-    </sval>
-    <sval type="array" size="5">
-      <sval type="int" val="1100"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-      <sval type="string" val="wwsl.T2.globalmenu"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="130"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-    </sval>
-    <sval type="array" size="1">
-      <sval type="int" val="1168"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="101"/>
-      <sval type="string" val="Uninstall.Hotkey"/>
-    </sval>
-    <sval type="array" size="6">
-      <sval type="int" val="129"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="1"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="104"/>
-      <sval type="int" val="-1610585085"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="-1"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="1101"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="6"/>
-    </sval>
-    <sval type="array" size="7">
-      <sval type="int" val="130"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="4"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="1">
-      <sval type="int" val="1168"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="101"/>
-      <sval type="string" val="Clear.GlobalVars"/>
-    </sval>
-    <sval type="array" size="5">
-      <sval type="int" val="157"/>
-      <sval type="int" val="5"/>
-      <sval type="string" val="wwsl.T2.LastShipNumber"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="5">
-      <sval type="int" val="157"/>
-      <sval type="int" val="5"/>
-      <sval type="string" val="wwsl.T2.global"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="1">
-      <sval type="int" val="1168"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="103"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-    </sval>
-  </sval>
-  <sval type="array" size="1">
-    <sval type="array" size="2">
-      <sval type="int" val="63"/>
-      <sval type="string" val="Uninstall ?"/>
-    </sval>
-  </sval>
-  <sval type="array" size="47">
-    <sval type="array" size="2">
-      <sval type="int" val="2"/>
-      <sval type="int" val="2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="7"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="Configuration:"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="0 - Version"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="1 - Hotkey ID"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="2 - Array of Program -&gt; Ship index"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="3 - Global menu opened?"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="4 - Debug options. See subsystem codes below:"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="    1 - enable navigator logging"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="    2 - enable setup/update logging"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="    4 - enable additional debug actions/options"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="    8 - enable trade logging"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="    16 - enable contragent validation logging"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="    32 - enable logging of signal handling"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="    64 - enable logging of function calls"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="    128 - enable combat message logging"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="5 - Array of exclude patterns of name for ship searching"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="6 - Last ship number"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="7 - Period to clean log (days)"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="8"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="8 - Log was cleared last time (seconds)"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="8"/>
-      <sval type="int" val="2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="11"/>
-      <sval type="int" val="5"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="12"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="13"/>
-      <sval type="int" val="2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="21"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="21"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="Build cache"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="29"/>
-      <sval type="int" val="6"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="33"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="45"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="46"/>
-      <sval type="int" val="2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="53"/>
-      <sval type="int" val="2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="59"/>
-      <sval type="int" val="2"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="60"/>
-      <sval type="int" val="1"/>
-      <sval type="string" val="TODO:"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="61"/>
-      <sval type="int" val="2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="69"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="75"/>
-      <sval type="int" val="5"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="76"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="77"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="84"/>
-      <sval type="int" val="2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="89"/>
-      <sval type="int" val="2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="94"/>
-      <sval type="int" val="2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="97"/>
-      <sval type="int" val="2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="102"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="103"/>
-      <sval type="int" val="2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="108"/>
-      <sval type="int" val="4"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="109"/>
-      <sval type="int" val="2"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="113"/>
-      <sval type="int" val="2"/>
-    </sval>
-  </sval>
-  <sval type="int" val="0"/>
-</sval>
-
-</codearray>
-<nosignature>1916</nosignature>
+	<name>setup.plugin.T2</name>
+	<version>301</version>
+	<engineversion>44</engineversion>
+	<description>T2: System - Setup plugin</description>
+	<arguments>
+		<argument index="1" name="uninstall" type="Var/Boolean" desc="Uninstall ?" />
+	</arguments>
+	<sourcetext>
+		<line linenr="001" indent="">
+			<var>$T2.PageID</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>8370</var>
+		</line>
+		<line linenr="002" indent="">
+			<text>load</text>
+			<text> </text>
+			<text>text</text>
+			<text>:</text>
+			<text> </text>
+			<text>id</text>
+			<text>=</text>
+			<var>$T2.PageID</var>
+		</line>
+		<line linenr="003" indent="" />
+		<line linenr="004" indent="">
+			<var>$cmd</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>[COMMAND_TYPE_TRADE_58]</var>
+		</line>
+		<line linenr="005" indent="">
+			<var>$T2.Config</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<text>get</text>
+			<text> </text>
+			<text>global</text>
+			<text> </text>
+			<text>variable</text>
+			<text>:</text>
+			<text> </text>
+			<text>name</text>
+			<text>=</text>
+			<text>'wwsl.T2.global'</text>
+		</line>
+		<line linenr="006" indent="">
+			<text>if</text>
+			<text> </text>
+			<text>not</text>
+			<text> </text>
+			<text>is</text>
+			<text> </text>
+			<text>datatype</text>
+			<text>[</text>
+			<var>$T2.Config</var>
+			<text>]</text>
+			<text> </text>
+			<text>==</text>
+			<text> </text>
+			<var>[DATATYPE_ARRAY]</var>
+		</line>
+		<line linenr="007" indent="&#160;">
+			<var>$T2.Config</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<text>array</text>
+			<text> </text>
+			<text>alloc</text>
+			<text>:</text>
+			<text> </text>
+			<text>size</text>
+			<text>=</text>
+			<var>0</var>
+		</line>
+		<line linenr="008" indent="&#160;">
+			<text>set</text>
+			<text> </text>
+			<text>global</text>
+			<text> </text>
+			<text>variable</text>
+			<text>:</text>
+			<text> </text>
+			<text>name</text>
+			<text>=</text>
+			<text>'wwsl.T2.global'</text>
+			<text> </text>
+			<text>value</text>
+			<text>=</text>
+			<var>$T2.Config</var>
+		</line>
+		<line linenr="009" indent="">
+			<text>end</text>
+		</line>
+		<line linenr="010" indent="">
+			<text>resize</text>
+			<text> </text>
+			<text>array</text>
+			<text> </text>
+			<var>$T2.Config</var>
+			<text> </text>
+			<text>to</text>
+			<text> </text>
+			<var>9</var>
+		</line>
+		<line linenr="011" indent="">
+			<comment>* Configuration:</comment>
+		</line>
+		<line linenr="012" indent="">
+			<comment>* 0 - Version</comment>
+		</line>
+		<line linenr="013" indent="">
+			<comment>* 1 - Hotkey ID</comment>
+		</line>
+		<line linenr="014" indent="">
+			<comment>* 2 - Array of Program -&gt; Ship index</comment>
+		</line>
+		<line linenr="015" indent="">
+			<comment>* 3 - Global menu opened?</comment>
+		</line>
+		<line linenr="016" indent="">
+			<comment>* 4 - Debug options. See subsystem codes below:</comment>
+		</line>
+		<line linenr="017" indent="">
+			<comment>*     1 - enable navigator logging</comment>
+		</line>
+		<line linenr="018" indent="">
+			<comment>*     2 - enable setup/update logging</comment>
+		</line>
+		<line linenr="019" indent="">
+			<comment>*     4 - enable additional debug actions/options</comment>
+		</line>
+		<line linenr="020" indent="">
+			<comment>*     8 - enable trade logging</comment>
+		</line>
+		<line linenr="021" indent="">
+			<comment>*     16 - enable contragent validation logging</comment>
+		</line>
+		<line linenr="022" indent="">
+			<comment>*     32 - enable logging of signal handling</comment>
+		</line>
+		<line linenr="023" indent="">
+			<comment>*     64 - enable logging of function calls</comment>
+		</line>
+		<line linenr="024" indent="">
+			<comment>*     128 - enable combat message logging</comment>
+		</line>
+		<line linenr="025" indent="">
+			<comment>* 5 - Array of exclude patterns of name for ship searching</comment>
+		</line>
+		<line linenr="026" indent="">
+			<comment>* 6 - Last ship number</comment>
+		</line>
+		<line linenr="027" indent="">
+			<comment>* 7 - Period to clean log (days)</comment>
+		</line>
+		<line linenr="028" indent="">
+			<comment>* 8 - Log was cleared last time (seconds)</comment>
+		</line>
+		<line linenr="029" indent="" />
+		<line linenr="030" indent="">
+			<text>if</text>
+			<text> </text>
+			<var>$uninstall</var>
+		</line>
+		<line linenr="031" indent="&#160;">
+			<text>gosub</text>
+			<text> </text>
+			<var>Uninstall</var>
+			<text>:</text>
+		</line>
+		<line linenr="032" indent="">
+			<text>else</text>
+		</line>
+		<line linenr="033" indent="&#160;">
+			<text>gosub</text>
+			<text> </text>
+			<var>Install</var>
+			<text>:</text>
+		</line>
+		<line linenr="034" indent="">
+			<text>end</text>
+		</line>
+		<line linenr="035" indent="">
+			<text>return</text>
+			<text> </text>
+			<var>[TRUE]</var>
+		</line>
+		<line linenr="036" indent="" />
+		<line linenr="037" indent="">
+			<var>Update.Program2Ship</var>
+			<text>:</text>
+		</line>
+		<line linenr="038" indent="&#160;">
+			<var>$Dummy.TopCache</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<text>array</text>
+			<text> </text>
+			<text>alloc</text>
+			<text>:</text>
+			<text> </text>
+			<text>size</text>
+			<text>=</text>
+			<var>0</var>
+		</line>
+		<line linenr="039" indent="&#160;" interruptable="@">
+			<var>$Dummy.Index</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>[THIS]</var>
+			<text>-&gt;</text>
+			<text> </text>
+			<text>call</text>
+			<text> </text>
+			<text>script</text>
+			<text> </text>
+			<call>wwsl.T2.function0</call>
+			<text> </text>
+			<text>:</text>
+			<text> </text>
+			<text>fn</text>
+			<text>=</text>
+			<var>51</var>
+		</line>
+		<line linenr="040" indent="&#160;">
+			<text>while</text>
+			<text> </text>
+			<var>$Dummy.Index</var>
+			<text> </text>
+			<text>&gt;</text>
+			<text> </text>
+			<var>0</var>
+		</line>
+		<line linenr="041" indent="&#160;&#160;">
+			<text>dec</text>
+			<text> </text>
+			<var>$Dummy.Index</var>
+		</line>
+		<line linenr="042" indent="&#160;&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<text>array</text>
+			<text> </text>
+			<text>alloc</text>
+			<text>:</text>
+			<text> </text>
+			<text>size</text>
+			<text>=</text>
+			<var>0</var>
+		</line>
+		<line linenr="043" indent="&#160;&#160;">
+			<text>append</text>
+			<text> </text>
+			<var>$Dummy</var>
+			<text> </text>
+			<text>to</text>
+			<text> </text>
+			<text>array</text>
+			<text> </text>
+			<var>$Dummy.TopCache</var>
+		</line>
+		<line linenr="044" indent="&#160;">
+			<text>end</text>
+		</line>
+		<line linenr="045" indent="&#160;">
+			<comment>* Build cache</comment>
+		</line>
+		<line linenr="046" indent="&#160;">
+			<var>$Dummy.List</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<text>get</text>
+			<text> </text>
+			<text>ship</text>
+			<text> </text>
+			<text>array</text>
+			<text>:</text>
+			<text> </text>
+			<text>of</text>
+			<text> </text>
+			<text>race</text>
+			<text> </text>
+			<var>[Player]</var>
+			<text> </text>
+			<text>class</text>
+			<text>/</text>
+			<text>type</text>
+			<text>=</text>
+			<var>null</var>
+		</line>
+		<line linenr="047" indent="&#160;">
+			<var>$Dummy.Index</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<text>size</text>
+			<text> </text>
+			<text>of</text>
+			<text> </text>
+			<text>array</text>
+			<text> </text>
+			<var>$Dummy.List</var>
+		</line>
+		<line linenr="048" indent="&#160;">
+			<text>while</text>
+			<text> </text>
+			<var>$Dummy.Index</var>
+			<text> </text>
+			<text>&gt;</text>
+			<text> </text>
+			<var>0</var>
+		</line>
+		<line linenr="049" indent="&#160;&#160;">
+			<text>dec</text>
+			<text> </text>
+			<var>$Dummy.Index</var>
+		</line>
+		<line linenr="050" indent="&#160;&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$Dummy.List</var>
+			<text>[</text>
+			<var>$Dummy.Index</var>
+			<text>]</text>
+		</line>
+		<line linenr="051" indent="&#160;&#160;">
+			<var>$Dummy2</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$Dummy</var>
+			<text>-&gt;</text>
+			<text> </text>
+			<text>get</text>
+			<text> </text>
+			<text>local</text>
+			<text> </text>
+			<text>variable</text>
+			<text>:</text>
+			<text> </text>
+			<text>name</text>
+			<text>=</text>
+			<text>'wwsl.T2.config'</text>
+		</line>
+		<line linenr="052" indent="&#160;&#160;">
+			<text>skip</text>
+			<text> </text>
+			<text>if</text>
+			<text> </text>
+			<text>is</text>
+			<text> </text>
+			<text>datatype</text>
+			<text>[</text>
+			<var>$Dummy2</var>
+			<text>]</text>
+			<text> </text>
+			<text>==</text>
+			<text> </text>
+			<var>[DATATYPE_ARRAY]</var>
+		</line>
+		<line linenr="053" indent="&#160;&#160;&#160;">
+			<text>continue</text>
+		</line>
+		<line linenr="054" indent="&#160;&#160;">
+			<var>$Dummy.Program</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$Dummy2</var>
+			<text>[</text>
+			<var>1</var>
+			<text>]</text>
+		</line>
+		<line linenr="055" indent="&#160;&#160;">
+			<var>$Dummy.Cache</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$Dummy.TopCache</var>
+			<text>[</text>
+			<var>$Dummy.Program</var>
+			<text>]</text>
+		</line>
+		<line linenr="056" indent="&#160;&#160;">
+			<text>append</text>
+			<text> </text>
+			<var>$Dummy</var>
+			<text> </text>
+			<text>to</text>
+			<text> </text>
+			<text>array</text>
+			<text> </text>
+			<var>$Dummy.Cache</var>
+		</line>
+		<line linenr="057" indent="&#160;">
+			<text>end</text>
+		</line>
+		<line linenr="058" indent="&#160;">
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>2</var>
+			<text>]</text>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$Dummy.TopCache</var>
+		</line>
+		<line linenr="059" indent="&#160;">
+			<var>$Dummy.Flags</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>4</var>
+			<text>]</text>
+		</line>
+		<line linenr="060" indent="&#160;">
+			<text>skip</text>
+			<text> </text>
+			<text>if</text>
+			<text> </text>
+			<var>2</var>
+			<text> </text>
+			<text>&amp;</text>
+			<text> </text>
+			<var>$Dummy.Flags</var>
+		</line>
+		<line linenr="061" indent="&#160;&#160;">
+			<text>endsub</text>
+		</line>
+		<line linenr="062" indent="&#160;">
+			<var>$Dummy.Index</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<text>size</text>
+			<text> </text>
+			<text>of</text>
+			<text> </text>
+			<text>array</text>
+			<text> </text>
+			<var>$Dummy.TopCache</var>
+		</line>
+		<line linenr="063" indent="&#160;">
+			<text>write</text>
+			<text> </text>
+			<text>to</text>
+			<text> </text>
+			<text>log</text>
+			<text> </text>
+			<text>file</text>
+			<text> </text>
+			<var>$T2.PageID</var>
+			<text> </text>
+			<text>append</text>
+			<text>=</text>
+			<var>[TRUE]</var>
+			<text> </text>
+			<text>printf</text>
+			<text>:</text>
+			<text> </text>
+			<text>fmt</text>
+			<text>=</text>
+			<text>'Total programs: %s'</text>
+			<text>,</text>
+			<text> </text>
+			<var>$Dummy.Index</var>
+			<text>,</text>
+			<text> </text>
+			<var>null</var>
+			<text>,</text>
+			<text> </text>
+			<var>null</var>
+			<text>,</text>
+			<text> </text>
+			<var>null</var>
+			<text>,</text>
+			<text> </text>
+			<var>null</var>
+		</line>
+		<line linenr="064" indent="&#160;">
+			<text>while</text>
+			<text> </text>
+			<var>$Dummy.Index</var>
+			<text> </text>
+			<text>&gt;</text>
+			<text> </text>
+			<var>0</var>
+		</line>
+		<line linenr="065" indent="&#160;&#160;">
+			<text>dec</text>
+			<text> </text>
+			<var>$Dummy.Index</var>
+		</line>
+		<line linenr="066" indent="&#160;&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$Dummy.TopCache</var>
+			<text>[</text>
+			<var>$Dummy.Index</var>
+			<text>]</text>
+		</line>
+		<line linenr="067" indent="&#160;&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<text>size</text>
+			<text> </text>
+			<text>of</text>
+			<text> </text>
+			<text>array</text>
+			<text> </text>
+			<var>$Dummy</var>
+		</line>
+		<line linenr="068" indent="&#160;&#160;">
+			<text>write</text>
+			<text> </text>
+			<text>to</text>
+			<text> </text>
+			<text>log</text>
+			<text> </text>
+			<text>file</text>
+			<text> </text>
+			<var>$T2.PageID</var>
+			<text> </text>
+			<text>append</text>
+			<text>=</text>
+			<var>[TRUE]</var>
+			<text> </text>
+			<text>printf</text>
+			<text>:</text>
+			<text> </text>
+			<text>fmt</text>
+			<text>=</text>
+			<text>'    Program #%s cache size: %s'</text>
+			<text>,</text>
+			<text> </text>
+			<var>$Dummy.Index</var>
+			<text>,</text>
+			<text> </text>
+			<var>$Dummy</var>
+			<text>,</text>
+			<text> </text>
+			<var>null</var>
+			<text>,</text>
+			<text> </text>
+			<var>null</var>
+			<text>,</text>
+			<text> </text>
+			<var>null</var>
+		</line>
+		<line linenr="069" indent="&#160;">
+			<text>end</text>
+		</line>
+		<line linenr="070" indent="">
+			<text>endsub</text>
+		</line>
+		<line linenr="071" indent="" />
+		<line linenr="072" indent="">
+			<var>Install</var>
+			<text>:</text>
+		</line>
+		<line linenr="073" indent="&#160;">
+			<text>gosub</text>
+			<text> </text>
+			<var>Install.CheckVersion</var>
+			<text>:</text>
+		</line>
+		<line linenr="074" indent="&#160;">
+			<text>gosub</text>
+			<text> </text>
+			<var>Install.CheckConfig</var>
+			<text>:</text>
+		</line>
+		<line linenr="075" indent="&#160;">
+			<text>gosub</text>
+			<text> </text>
+			<var>Update.Program2Ship</var>
+			<text>:</text>
+		</line>
+		<line linenr="076" indent="&#160;">
+			<text>gosub</text>
+			<text> </text>
+			<var>Install.Cmd</var>
+			<text>:</text>
+		</line>
+		<line linenr="077" indent="&#160;">
+			<text>gosub</text>
+			<text> </text>
+			<var>Install.Hotkey</var>
+			<text>:</text>
+		</line>
+		<line linenr="078" indent="">
+			<text>endsub</text>
+		</line>
+		<line linenr="079" indent="" />
+		<line linenr="080" indent="">
+			<var>Uninstall</var>
+			<text>:</text>
+		</line>
+		<line linenr="081" indent="&#160;">
+			<text>gosub</text>
+			<text> </text>
+			<var>Stop.Ships</var>
+			<text>:</text>
+		</line>
+		<line linenr="082" indent="&#160;">
+			<text>gosub</text>
+			<text> </text>
+			<var>Uninstall.Cmd</var>
+			<text>:</text>
+		</line>
+		<line linenr="083" indent="&#160;">
+			<text>gosub</text>
+			<text> </text>
+			<var>Uninstall.Hotkey</var>
+			<text>:</text>
+		</line>
+		<line linenr="084" indent="&#160;">
+			<text>gosub</text>
+			<text> </text>
+			<var>Clear.GlobalVars</var>
+			<text>:</text>
+		</line>
+		<line linenr="085" indent="">
+			<text>endsub</text>
+		</line>
+		<line linenr="086" indent="" />
+		<line linenr="087" indent="">
+			<var>Stop.Ships</var>
+			<text>:</text>
+		</line>
+		<line linenr="088" indent="&#160;">
+			<comment>* TODO:</comment>
+		</line>
+		<line linenr="089" indent="">
+			<text>endsub</text>
+		</line>
+		<line linenr="090" indent="" />
+		<line linenr="091" indent="">
+			<var>Install.CheckConfig</var>
+			<text>:</text>
+		</line>
+		<line linenr="092" indent="&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>4</var>
+			<text>]</text>
+		</line>
+		<line linenr="093" indent="&#160;">
+			<text>skip</text>
+			<text> </text>
+			<text>if</text>
+			<text> </text>
+			<text>is</text>
+			<text> </text>
+			<text>datatype</text>
+			<text>[</text>
+			<var>$Dummy</var>
+			<text>]</text>
+			<text> </text>
+			<text>==</text>
+			<text> </text>
+			<var>[DATATYPE_INT]</var>
+		</line>
+		<line linenr="094" indent="&#160;&#160;">
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>4</var>
+			<text>]</text>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>0</var>
+		</line>
+		<line linenr="095" indent="&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>5</var>
+			<text>]</text>
+		</line>
+		<line linenr="096" indent="&#160;">
+			<text>if</text>
+			<text> </text>
+			<text>not</text>
+			<text> </text>
+			<text>is</text>
+			<text> </text>
+			<text>datatype</text>
+			<text>[</text>
+			<var>$Dummy</var>
+			<text>]</text>
+			<text> </text>
+			<text>==</text>
+			<text> </text>
+			<var>[DATATYPE_ARRAY]</var>
+		</line>
+		<line linenr="097" indent="&#160;&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<text>array</text>
+			<text> </text>
+			<text>alloc</text>
+			<text>:</text>
+			<text> </text>
+			<text>size</text>
+			<text>=</text>
+			<var>0</var>
+		</line>
+		<line linenr="098" indent="&#160;&#160;">
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>5</var>
+			<text>]</text>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$Dummy</var>
+		</line>
+		<line linenr="099" indent="&#160;">
+			<text>end</text>
+		</line>
+		<line linenr="100" indent="&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>6</var>
+			<text>]</text>
+		</line>
+		<line linenr="101" indent="&#160;">
+			<text>if</text>
+			<text> </text>
+			<text>not</text>
+			<text> </text>
+			<text>is</text>
+			<text> </text>
+			<text>datatype</text>
+			<text>[</text>
+			<var>$Dummy</var>
+			<text>]</text>
+			<text> </text>
+			<text>==</text>
+			<text> </text>
+			<var>[DATATYPE_INT]</var>
+		</line>
+		<line linenr="102" indent="&#160;&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<text>get</text>
+			<text> </text>
+			<text>global</text>
+			<text> </text>
+			<text>variable</text>
+			<text>:</text>
+			<text> </text>
+			<text>name</text>
+			<text>=</text>
+			<text>'wwsl.T2.LastShipNumber'</text>
+		</line>
+		<line linenr="103" indent="&#160;&#160;">
+			<text>if</text>
+			<text> </text>
+			<var>$Dummy</var>
+		</line>
+		<line linenr="104" indent="&#160;&#160;&#160;">
+			<text>set</text>
+			<text> </text>
+			<text>global</text>
+			<text> </text>
+			<text>variable</text>
+			<text>:</text>
+			<text> </text>
+			<text>name</text>
+			<text>=</text>
+			<text>'wwsl.T2.LastShipNumber'</text>
+			<text> </text>
+			<text>value</text>
+			<text>=</text>
+			<var>null</var>
+		</line>
+		<line linenr="105" indent="&#160;&#160;">
+			<text>else</text>
+		</line>
+		<line linenr="106" indent="&#160;&#160;&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>0</var>
+		</line>
+		<line linenr="107" indent="&#160;&#160;">
+			<text>end</text>
+		</line>
+		<line linenr="108" indent="&#160;&#160;">
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>6</var>
+			<text>]</text>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$Dummy</var>
+		</line>
+		<line linenr="109" indent="&#160;">
+			<text>end</text>
+		</line>
+		<line linenr="110" indent="&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>7</var>
+			<text>]</text>
+		</line>
+		<line linenr="111" indent="&#160;">
+			<text>skip</text>
+			<text> </text>
+			<text>if</text>
+			<text> </text>
+			<text>is</text>
+			<text> </text>
+			<text>datatype</text>
+			<text>[</text>
+			<var>$Dummy</var>
+			<text>]</text>
+			<text> </text>
+			<text>==</text>
+			<text> </text>
+			<var>[DATATYPE_INT]</var>
+		</line>
+		<line linenr="112" indent="&#160;&#160;">
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>7</var>
+			<text>]</text>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>3</var>
+		</line>
+		<line linenr="113" indent="&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>8</var>
+			<text>]</text>
+		</line>
+		<line linenr="114" indent="&#160;">
+			<text>skip</text>
+			<text> </text>
+			<text>if</text>
+			<text> </text>
+			<text>is</text>
+			<text> </text>
+			<text>datatype</text>
+			<text>[</text>
+			<var>$Dummy</var>
+			<text>]</text>
+			<text> </text>
+			<text>==</text>
+			<text> </text>
+			<var>[DATATYPE_INT]</var>
+		</line>
+		<line linenr="115" indent="&#160;&#160;">
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>8</var>
+			<text>]</text>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>0</var>
+		</line>
+		<line linenr="116" indent="">
+			<text>endsub</text>
+		</line>
+		<line linenr="117" indent="" />
+		<line linenr="118" indent="">
+			<var>Install.CheckVersion</var>
+			<text>:</text>
+		</line>
+		<line linenr="119" indent="&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>0</var>
+			<text>]</text>
+		</line>
+		<line linenr="120" indent="&#160;">
+			<text>skip</text>
+			<text> </text>
+			<text>if</text>
+			<text> </text>
+			<var>$Dummy</var>
+			<text> </text>
+			<text>==</text>
+			<text> </text>
+			<text>'3.01'</text>
+		</line>
+		<line linenr="121" indent="&#160;&#160;">
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>0</var>
+			<text>]</text>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<text>'3.01'</text>
+		</line>
+		<line linenr="122" indent="">
+			<text>endsub</text>
+		</line>
+		<line linenr="123" indent="" />
+		<line linenr="124" indent="">
+			<var>Install.Cmd</var>
+			<text>:</text>
+		</line>
+		<line linenr="125" indent="&#160;">
+			<text>set</text>
+			<text> </text>
+			<text>script</text>
+			<text> </text>
+			<text>command</text>
+			<text> </text>
+			<text>upgrade</text>
+			<text>:</text>
+			<text> </text>
+			<text>command</text>
+			<text>=</text>
+			<var>$cmd</var>
+			<text>  </text>
+			<text>upgrade</text>
+			<text>=</text>
+			<var>[TRUE]</var>
+		</line>
+		<line linenr="126" indent="&#160;">
+			<text>set</text>
+			<text> </text>
+			<text>ship</text>
+			<text> </text>
+			<text>command</text>
+			<text> </text>
+			<text>preload</text>
+			<text> </text>
+			<text>script</text>
+			<text>:</text>
+			<text> </text>
+			<text>command</text>
+			<text>=</text>
+			<var>$cmd</var>
+			<text> </text>
+			<text>script</text>
+			<text>=</text>
+			<call>wwsl.T2.shipmenu</call>
+		</line>
+		<line linenr="127" indent="&#160;">
+			<text>global</text>
+			<text> </text>
+			<text>script</text>
+			<text> </text>
+			<text>map</text>
+			<text>:</text>
+			<text> </text>
+			<text>set</text>
+			<text>:</text>
+			<text> </text>
+			<text>key</text>
+			<text>=</text>
+			<var>$cmd</var>
+			<text>,</text>
+			<text> </text>
+			<text>class</text>
+			<text>=</text>
+			<var>[Ship]</var>
+			<text>,</text>
+			<text> </text>
+			<text>race</text>
+			<text>=</text>
+			<var>[Player]</var>
+			<text>,</text>
+			<text> </text>
+			<text>script</text>
+			<text>=</text>
+			<call>wwsl.T2.run</call>
+			<text>,</text>
+			<text> </text>
+			<text>prio</text>
+			<text>=</text>
+			<var>0</var>
+		</line>
+		<line linenr="128" indent="">
+			<text>endsub</text>
+		</line>
+		<line linenr="129" indent="" />
+		<line linenr="130" indent="">
+			<var>Uninstall.Cmd</var>
+			<text>:</text>
+		</line>
+		<line linenr="131" indent="&#160;">
+			<text>global</text>
+			<text> </text>
+			<text>script</text>
+			<text> </text>
+			<text>map</text>
+			<text>:</text>
+			<text> </text>
+			<text>remove</text>
+			<text>:</text>
+			<text> </text>
+			<text>key</text>
+			<text>=</text>
+			<var>$cmd</var>
+			<text>,</text>
+			<text> </text>
+			<text>class</text>
+			<text>=</text>
+			<var>[Ship]</var>
+			<text>,</text>
+			<text> </text>
+			<text>race</text>
+			<text>=</text>
+			<var>[Player]</var>
+		</line>
+		<line linenr="132" indent="">
+			<text>endsub</text>
+		</line>
+		<line linenr="133" indent="" />
+		<line linenr="134" indent="">
+			<var>Install.Hotkey</var>
+			<text>:</text>
+		</line>
+		<line linenr="135" indent="&#160;">
+			<text>if</text>
+			<text> </text>
+			<text>not</text>
+			<text> </text>
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>1</var>
+			<text>]</text>
+		</line>
+		<line linenr="136" indent="&#160;&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<text>read</text>
+			<text> </text>
+			<text>text</text>
+			<text>:</text>
+			<text> </text>
+			<text>page</text>
+			<text>=</text>
+			<var>$T2.PageID</var>
+			<text> </text>
+			<text>id</text>
+			<text>=</text>
+			<var>999</var>
+		</line>
+		<line linenr="137" indent="&#160;&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<text>register</text>
+			<text> </text>
+			<text>hotkey</text>
+			<text> </text>
+			<var>$Dummy</var>
+			<text> </text>
+			<text>to</text>
+			<text> </text>
+			<text>call</text>
+			<text> </text>
+			<text>script</text>
+			<text> </text>
+			<call>wwsl.T2.globalmenu</call>
+		</line>
+		<line linenr="138" indent="&#160;&#160;">
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>1</var>
+			<text>]</text>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$Dummy</var>
+		</line>
+		<line linenr="139" indent="&#160;">
+			<text>end</text>
+		</line>
+		<line linenr="140" indent="">
+			<text>endsub</text>
+		</line>
+		<line linenr="141" indent="" />
+		<line linenr="142" indent="">
+			<var>Uninstall.Hotkey</var>
+			<text>:</text>
+		</line>
+		<line linenr="143" indent="&#160;">
+			<var>$Dummy</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>1</var>
+			<text>]</text>
+		</line>
+		<line linenr="144" indent="&#160;">
+			<text>if</text>
+			<text> </text>
+			<var>$Dummy</var>
+		</line>
+		<line linenr="145" indent="&#160;&#160;">
+			<text>unregister</text>
+			<text> </text>
+			<text>hotkey</text>
+			<text> </text>
+			<var>$Dummy</var>
+		</line>
+		<line linenr="146" indent="&#160;&#160;">
+			<var>$T2.Config</var>
+			<text>[</text>
+			<var>1</var>
+			<text>]</text>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>null</var>
+		</line>
+		<line linenr="147" indent="&#160;">
+			<text>end</text>
+		</line>
+		<line linenr="148" indent="">
+			<text>endsub</text>
+		</line>
+		<line linenr="149" indent="" />
+		<line linenr="150" indent="">
+			<var>Clear.GlobalVars</var>
+			<text>:</text>
+		</line>
+		<line linenr="151" indent="&#160;">
+			<text>set</text>
+			<text> </text>
+			<text>global</text>
+			<text> </text>
+			<text>variable</text>
+			<text>:</text>
+			<text> </text>
+			<text>name</text>
+			<text>=</text>
+			<text>'wwsl.T2.LastShipNumber'</text>
+			<text> </text>
+			<text>value</text>
+			<text>=</text>
+			<var>null</var>
+		</line>
+		<line linenr="152" indent="&#160;">
+			<text>set</text>
+			<text> </text>
+			<text>global</text>
+			<text> </text>
+			<text>variable</text>
+			<text>:</text>
+			<text> </text>
+			<text>name</text>
+			<text>=</text>
+			<text>'wwsl.T2.global'</text>
+			<text> </text>
+			<text>value</text>
+			<text>=</text>
+			<var>null</var>
+		</line>
+		<line linenr="153" indent="">
+			<text>endsub</text>
+		</line>
+		<line linenr="154" indent="" />
+		<line linenr="155" indent="">
+			<text>return</text>
+			<text> </text>
+			<var>null</var>
+		</line>
+	</sourcetext>
+	<codearray>
+		<sval type="array" size="10">
+			<sval type="string" val="setup.plugin.T2" />
+			<sval type="int" val="44" />
+			<sval type="string" val="T2: System - Setup plugin" />
+			<sval type="int" val="301" />
+			<sval type="int" val="0" />
+			<sval type="array" size="12">
+				<sval type="string" val="uninstall" />
+				<sval type="string" val="T2.PageID" />
+				<sval type="string" val="cmd" />
+				<sval type="string" val="T2.Config" />
+				<sval type="string" val="Dummy.TopCache" />
+				<sval type="string" val="Dummy.Index" />
+				<sval type="string" val="Dummy" />
+				<sval type="string" val="Dummy.List" />
+				<sval type="string" val="Dummy2" />
+				<sval type="string" val="Dummy.Program" />
+				<sval type="string" val="Dummy.Cache" />
+				<sval type="string" val="Dummy.Flags" />
+			</sval>
+			<sval type="array" size="114">
+				<sval type="array" size="7">
+					<sval type="int" val="104" />
+					<sval type="int" val="1" />
+					<sval type="int" val="1" />
+					<sval type="int" val="4" />
+					<sval type="int" val="8370" />
+					<sval type="int" val="1" />
+					<sval type="int" val="-1" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="151" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="1" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="104" />
+					<sval type="int" val="2" />
+					<sval type="int" val="1" />
+					<sval type="int" val="18" />
+					<sval type="int" val="458" />
+					<sval type="int" val="1" />
+					<sval type="int" val="-1" />
+				</sval>
+				<sval type="array" size="4">
+					<sval type="int" val="158" />
+					<sval type="int" val="5" />
+					<sval type="string" val="wwsl.T2.global" />
+					<sval type="int" val="3" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="125" />
+					<sval type="int" val="-536869116" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="20" />
+					<sval type="int" val="21" />
+				</sval>
+				<sval type="array" size="4">
+					<sval type="int" val="128" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="5">
+					<sval type="int" val="157" />
+					<sval type="int" val="5" />
+					<sval type="string" val="wwsl.T2.global" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+				</sval>
+				<sval type="array" size="5">
+					<sval type="int" val="137" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="9" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="104" />
+					<sval type="int" val="-1610609917" />
+					<sval type="int" val="1" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="0" />
+					<sval type="int" val="1" />
+					<sval type="int" val="-1" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="1167" />
+					<sval type="int" val="53" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="112" />
+					<sval type="int" val="12" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="1167" />
+					<sval type="int" val="46" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="103" />
+					<sval type="int" val="131075" />
+					<sval type="int" val="10" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="101" />
+					<sval type="string" val="Update.Program2Ship" />
+				</sval>
+				<sval type="array" size="4">
+					<sval type="int" val="128" />
+					<sval type="int" val="4" />
+					<sval type="int" val="4" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="8">
+					<sval type="int" val="102" />
+					<sval type="string" val="wwsl.T2.function0" />
+					<sval type="int" val="5" />
+					<sval type="int" val="131075" />
+					<sval type="int" val="1" />
+					<sval type="int" val="1" />
+					<sval type="int" val="4" />
+					<sval type="int" val="51" />
+				</sval>
+				<sval type="array" size="13">
+					<sval type="int" val="104" />
+					<sval type="int" val="-1610607351" />
+					<sval type="int" val="3" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="5" />
+					<sval type="int" val="4" />
+					<sval type="int" val="0" />
+					<sval type="int" val="15" />
+					<sval type="int" val="2" />
+					<sval type="int" val="3" />
+					<sval type="int" val="-1" />
+					<sval type="int" val="2" />
+					<sval type="int" val="-2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="143" />
+					<sval type="int" val="5" />
+				</sval>
+				<sval type="array" size="4">
+					<sval type="int" val="128" />
+					<sval type="int" val="6" />
+					<sval type="int" val="4" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="5">
+					<sval type="int" val="135" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="4" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="112" />
+					<sval type="int" val="16" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="1068" />
+					<sval type="int" val="10" />
+					<sval type="int" val="10" />
+					<sval type="int" val="7" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="4">
+					<sval type="int" val="131" />
+					<sval type="int" val="5" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="7" />
+				</sval>
+				<sval type="array" size="13">
+					<sval type="int" val="104" />
+					<sval type="int" val="-1610604279" />
+					<sval type="int" val="3" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="5" />
+					<sval type="int" val="4" />
+					<sval type="int" val="0" />
+					<sval type="int" val="15" />
+					<sval type="int" val="2" />
+					<sval type="int" val="3" />
+					<sval type="int" val="-1" />
+					<sval type="int" val="2" />
+					<sval type="int" val="-2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="143" />
+					<sval type="int" val="5" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="129" />
+					<sval type="int" val="6" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="7" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="5" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="156" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+					<sval type="int" val="5" />
+					<sval type="string" val="wwsl.T2.config" />
+					<sval type="int" val="8" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="125" />
+					<sval type="int" val="-536863481" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="8" />
+					<sval type="int" val="20" />
+					<sval type="int" val="21" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="112" />
+					<sval type="int" val="23" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="129" />
+					<sval type="int" val="9" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="8" />
+					<sval type="int" val="4" />
+					<sval type="int" val="1" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="129" />
+					<sval type="int" val="10" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="4" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="9" />
+				</sval>
+				<sval type="array" size="5">
+					<sval type="int" val="135" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="10" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="112" />
+					<sval type="int" val="23" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="130" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="2" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="129" />
+					<sval type="int" val="11" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="13">
+					<sval type="int" val="104" />
+					<sval type="int" val="-536861433" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="2" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="11" />
+					<sval type="int" val="15" />
+					<sval type="int" val="6" />
+					<sval type="int" val="3" />
+					<sval type="int" val="-1" />
+					<sval type="int" val="6" />
+					<sval type="int" val="-2" />
+				</sval>
+				<sval type="array" size="1">
+					<sval type="int" val="1168" />
+				</sval>
+				<sval type="array" size="4">
+					<sval type="int" val="131" />
+					<sval type="int" val="5" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="17">
+					<sval type="int" val="405" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="1" />
+					<sval type="int" val="131075" />
+					<sval type="int" val="10" />
+					<sval type="int" val="5" />
+					<sval type="string" val="Total programs: %s" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="5" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="13">
+					<sval type="int" val="104" />
+					<sval type="int" val="-1610601207" />
+					<sval type="int" val="3" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="5" />
+					<sval type="int" val="4" />
+					<sval type="int" val="0" />
+					<sval type="int" val="15" />
+					<sval type="int" val="2" />
+					<sval type="int" val="3" />
+					<sval type="int" val="-1" />
+					<sval type="int" val="2" />
+					<sval type="int" val="-2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="143" />
+					<sval type="int" val="5" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="129" />
+					<sval type="int" val="6" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="4" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="5" />
+				</sval>
+				<sval type="array" size="4">
+					<sval type="int" val="131" />
+					<sval type="int" val="6" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+				</sval>
+				<sval type="array" size="17">
+					<sval type="int" val="405" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="1" />
+					<sval type="int" val="131075" />
+					<sval type="int" val="10" />
+					<sval type="int" val="5" />
+					<sval type="string" val="    Program #%s cache size: %s" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="5" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="112" />
+					<sval type="int" val="39" />
+				</sval>
+				<sval type="array" size="1">
+					<sval type="int" val="1168" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="101" />
+					<sval type="string" val="Install" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="1167" />
+					<sval type="int" val="84" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="1167" />
+					<sval type="int" val="61" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="1167" />
+					<sval type="int" val="13" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="1167" />
+					<sval type="int" val="89" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="1167" />
+					<sval type="int" val="97" />
+				</sval>
+				<sval type="array" size="1">
+					<sval type="int" val="1168" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="101" />
+					<sval type="string" val="Uninstall" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="1167" />
+					<sval type="int" val="59" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="1167" />
+					<sval type="int" val="94" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="1167" />
+					<sval type="int" val="103" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="1167" />
+					<sval type="int" val="109" />
+				</sval>
+				<sval type="array" size="1">
+					<sval type="int" val="1168" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="101" />
+					<sval type="string" val="Stop.Ships" />
+				</sval>
+				<sval type="array" size="1">
+					<sval type="int" val="1168" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="101" />
+					<sval type="string" val="Install.CheckConfig" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="129" />
+					<sval type="int" val="6" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="125" />
+					<sval type="int" val="-536854265" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+					<sval type="int" val="20" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="130" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="4" />
+					<sval type="int" val="4" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="129" />
+					<sval type="int" val="6" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="5" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="125" />
+					<sval type="int" val="-536853244" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+					<sval type="int" val="20" />
+					<sval type="int" val="21" />
+				</sval>
+				<sval type="array" size="4">
+					<sval type="int" val="128" />
+					<sval type="int" val="6" />
+					<sval type="int" val="4" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="130" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="5" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="129" />
+					<sval type="int" val="6" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="6" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="125" />
+					<sval type="int" val="-536851196" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+					<sval type="int" val="20" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="4">
+					<sval type="int" val="158" />
+					<sval type="int" val="5" />
+					<sval type="string" val="wwsl.T2.LastShipNumber" />
+					<sval type="int" val="6" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="104" />
+					<sval type="int" val="-1610593533" />
+					<sval type="int" val="1" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+					<sval type="int" val="1" />
+					<sval type="int" val="-1" />
+				</sval>
+				<sval type="array" size="5">
+					<sval type="int" val="157" />
+					<sval type="int" val="5" />
+					<sval type="string" val="wwsl.T2.LastShipNumber" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="112" />
+					<sval type="int" val="76" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="104" />
+					<sval type="int" val="6" />
+					<sval type="int" val="1" />
+					<sval type="int" val="4" />
+					<sval type="int" val="0" />
+					<sval type="int" val="1" />
+					<sval type="int" val="-1" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="130" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="6" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="129" />
+					<sval type="int" val="6" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="7" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="125" />
+					<sval type="int" val="-536850425" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+					<sval type="int" val="20" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="130" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="7" />
+					<sval type="int" val="4" />
+					<sval type="int" val="3" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="129" />
+					<sval type="int" val="6" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="8" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="125" />
+					<sval type="int" val="-536849657" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+					<sval type="int" val="20" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="130" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="8" />
+					<sval type="int" val="4" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="1">
+					<sval type="int" val="1168" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="101" />
+					<sval type="string" val="Install.CheckVersion" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="129" />
+					<sval type="int" val="6" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="13">
+					<sval type="int" val="104" />
+					<sval type="int" val="-536848377" />
+					<sval type="int" val="3" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+					<sval type="int" val="5" />
+					<sval type="string" val="3.01" />
+					<sval type="int" val="15" />
+					<sval type="int" val="0" />
+					<sval type="int" val="3" />
+					<sval type="int" val="-1" />
+					<sval type="int" val="0" />
+					<sval type="int" val="-2" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="130" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="0" />
+					<sval type="int" val="5" />
+					<sval type="string" val="3.01" />
+				</sval>
+				<sval type="array" size="1">
+					<sval type="int" val="1168" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="101" />
+					<sval type="string" val="Install.Cmd" />
+				</sval>
+				<sval type="array" size="5">
+					<sval type="int" val="144" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="2" />
+					<sval type="int" val="131075" />
+					<sval type="int" val="10" />
+				</sval>
+				<sval type="array" size="4">
+					<sval type="int" val="1466" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="2" />
+					<sval type="string" val="wwsl.T2.shipmenu" />
+				</sval>
+				<sval type="array" size="10">
+					<sval type="int" val="118" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="2" />
+					<sval type="string" val="wwsl.T2.run" />
+					<sval type="int" val="4" />
+					<sval type="int" val="0" />
+					<sval type="int" val="12" />
+					<sval type="int" val="2004" />
+					<sval type="int" val="10" />
+					<sval type="int" val="10" />
+				</sval>
+				<sval type="array" size="1">
+					<sval type="int" val="1168" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="101" />
+					<sval type="string" val="Uninstall.Cmd" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="119" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="2" />
+					<sval type="int" val="12" />
+					<sval type="int" val="2004" />
+					<sval type="int" val="10" />
+					<sval type="int" val="10" />
+				</sval>
+				<sval type="array" size="1">
+					<sval type="int" val="1168" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="101" />
+					<sval type="string" val="Install.Hotkey" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="129" />
+					<sval type="int" val="-536844796" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="1" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="126" />
+					<sval type="int" val="6" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="1" />
+					<sval type="int" val="4" />
+					<sval type="int" val="999" />
+				</sval>
+				<sval type="array" size="5">
+					<sval type="int" val="1100" />
+					<sval type="int" val="6" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+					<sval type="string" val="wwsl.T2.globalmenu" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="130" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="1" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+				</sval>
+				<sval type="array" size="1">
+					<sval type="int" val="1168" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="101" />
+					<sval type="string" val="Uninstall.Hotkey" />
+				</sval>
+				<sval type="array" size="6">
+					<sval type="int" val="129" />
+					<sval type="int" val="6" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="1" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="104" />
+					<sval type="int" val="-1610585085" />
+					<sval type="int" val="1" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+					<sval type="int" val="1" />
+					<sval type="int" val="-1" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="1101" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="6" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="130" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="1" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="1">
+					<sval type="int" val="1168" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="101" />
+					<sval type="string" val="Clear.GlobalVars" />
+				</sval>
+				<sval type="array" size="5">
+					<sval type="int" val="157" />
+					<sval type="int" val="5" />
+					<sval type="string" val="wwsl.T2.LastShipNumber" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="5">
+					<sval type="int" val="157" />
+					<sval type="int" val="5" />
+					<sval type="string" val="wwsl.T2.global" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="1">
+					<sval type="int" val="1168" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="103" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+				</sval>
+			</sval>
+			<sval type="array" size="1">
+				<sval type="array" size="2">
+					<sval type="int" val="63" />
+					<sval type="string" val="Uninstall ?" />
+				</sval>
+			</sval>
+			<sval type="array" size="47">
+				<sval type="array" size="2">
+					<sval type="int" val="2" />
+					<sval type="int" val="2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="7" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="Configuration:" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="0 - Version" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="1 - Hotkey ID" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="2 - Array of Program -&gt; Ship index" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="3 - Global menu opened?" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="4 - Debug options. See subsystem codes below:" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="    1 - enable navigator logging" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="    2 - enable setup/update logging" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="    4 - enable additional debug actions/options" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="    8 - enable trade logging" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="    16 - enable contragent validation logging" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="    32 - enable logging of signal handling" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="    64 - enable logging of function calls" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="    128 - enable combat message logging" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="5 - Array of exclude patterns of name for ship searching" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="6 - Last ship number" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="7 - Period to clean log (days)" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="8" />
+					<sval type="int" val="1" />
+					<sval type="string" val="8 - Log was cleared last time (seconds)" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="8" />
+					<sval type="int" val="2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="11" />
+					<sval type="int" val="5" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="12" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="13" />
+					<sval type="int" val="2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="21" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="21" />
+					<sval type="int" val="1" />
+					<sval type="string" val="Build cache" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="29" />
+					<sval type="int" val="6" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="33" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="45" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="46" />
+					<sval type="int" val="2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="53" />
+					<sval type="int" val="2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="59" />
+					<sval type="int" val="2" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="60" />
+					<sval type="int" val="1" />
+					<sval type="string" val="TODO:" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="61" />
+					<sval type="int" val="2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="69" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="75" />
+					<sval type="int" val="5" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="76" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="77" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="84" />
+					<sval type="int" val="2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="89" />
+					<sval type="int" val="2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="94" />
+					<sval type="int" val="2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="97" />
+					<sval type="int" val="2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="102" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="103" />
+					<sval type="int" val="2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="108" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="109" />
+					<sval type="int" val="2" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="113" />
+					<sval type="int" val="2" />
+				</sval>
+			</sval>
+			<sval type="int" val="0" />
+		</sval>
+	</codearray>
 </script>

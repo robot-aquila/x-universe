@@ -1,77 +1,119 @@
-<?xml version="1.0" standalone="yes" ?>
-<?xml-stylesheet href="x2script.xsl" type="text/xsl" ?>
+<?xml version="1.0" standalone="yes"?>
+<?xml-stylesheet href="x2script.xsl" type="text/xsl"?>
+<!-- Generated using X-Studio -->
 <script>
-<name>wwsl.T2.function2</name>
-<version>301</version>
-<engineversion>45</engineversion>
-<description>T2: Common - Function library call two args</description>
-<arguments>
-<argument index="1" name="fn" type="Перем/Число" desc="#Fn" />
-<argument index="2" name="arg1" type="Значение" desc="arg1" />
-<argument index="3" name="arg2" type="Значение" desc="arg2" />
-</arguments>
-<sourcetext>
-<line linenr="001" interruptable="@" indent=""><var>$Result=</var><var>[THIS]&#160;-&gt;</var><text>&#160;call&#160;script&#160;</text><call>wwsl.T2.function</call><text>&#160;:&#160;</text><text>&#160;#Fn=</text><var>$fn</var><text>&#160;</text><text>&#160;arg1=</text><var>$arg1</var><text>&#160;</text><text>&#160;arg2=</text><var>$arg2</var><text>&#160;</text><text>&#160;arg3=</text><var>null</var><text>&#160;</text><text>&#160;arg4=</text><var>null</var><text>&#160;</text><text>&#160;arg5=</text><var>null</var></line>
-<line linenr="002" indent=""><text>return&#160;</text><var>$Result</var></line>
-</sourcetext>
-<codearray>
-
-<sval type="array" size="10">
-  <sval type="string" val="wwsl.T2.function2"/>
-  <sval type="int" val="45"/>
-  <sval type="string" val="T2: Common - Function library call two args"/>
-  <sval type="int" val="301"/>
-  <sval type="int" val="0"/>
-  <sval type="array" size="4">
-    <sval type="string" val="fn"/>
-    <sval type="string" val="arg1"/>
-    <sval type="string" val="arg2"/>
-    <sval type="string" val="Result"/>
-  </sval>
-  <sval type="array" size="2">
-    <sval type="array" size="18">
-      <sval type="int" val="102"/>
-      <sval type="string" val="wwsl.T2.function"/>
-      <sval type="int" val="3"/>
-      <sval type="int" val="131075"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="6"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="1"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="2"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-      <sval type="int" val="0"/>
-    </sval>
-    <sval type="array" size="3">
-      <sval type="int" val="103"/>
-      <sval type="int" val="131074"/>
-      <sval type="int" val="3"/>
-    </sval>
-  </sval>
-  <sval type="array" size="3">
-    <sval type="array" size="2">
-      <sval type="int" val="10"/>
-      <sval type="string" val="#Fn"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="9"/>
-      <sval type="string" val="arg1"/>
-    </sval>
-    <sval type="array" size="2">
-      <sval type="int" val="9"/>
-      <sval type="string" val="arg2"/>
-    </sval>
-  </sval>
-  <sval type="int" val="0"/>
-  <sval type="int" val="0"/>
-</sval>
-
-</codearray>
+	<name>wwsl.T2.function2</name>
+	<version>301</version>
+	<engineversion>44</engineversion>
+	<description>T2: Common - Function library call two args</description>
+	<arguments>
+		<argument index="1" name="fn" type="Var/Number" desc="#Fn" />
+		<argument index="2" name="arg1" type="Value" desc="arg1" />
+		<argument index="3" name="arg2" type="Value" desc="arg2" />
+	</arguments>
+	<sourcetext>
+		<line linenr="001" indent="" interruptable="@">
+			<var>$Result</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>[THIS]</var>
+			<text>-&gt;</text>
+			<text> </text>
+			<text>call</text>
+			<text> </text>
+			<text>script</text>
+			<text> </text>
+			<call>wwsl.T2.function</call>
+			<text> </text>
+			<text>:</text>
+			<text> </text>
+			<text>fn</text>
+			<text>=</text>
+			<var>$fn</var>
+			<text> </text>
+			<text>arg1</text>
+			<text>=</text>
+			<var>$arg1</var>
+			<text> </text>
+			<text>arg2</text>
+			<text>=</text>
+			<var>$arg2</var>
+			<text> </text>
+			<text>arg3</text>
+			<text>=</text>
+			<var>null</var>
+			<text> </text>
+			<text>arg4</text>
+			<text>=</text>
+			<var>null</var>
+			<text> </text>
+			<text>arg5</text>
+			<text>=</text>
+			<var>null</var>
+		</line>
+		<line linenr="002" indent="">
+			<text>return</text>
+			<text> </text>
+			<var>$Result</var>
+		</line>
+	</sourcetext>
+	<codearray>
+		<sval type="array" size="10">
+			<sval type="string" val="wwsl.T2.function2" />
+			<sval type="int" val="44" />
+			<sval type="string" val="T2: Common - Function library call two args" />
+			<sval type="int" val="301" />
+			<sval type="int" val="0" />
+			<sval type="array" size="4">
+				<sval type="string" val="fn" />
+				<sval type="string" val="arg1" />
+				<sval type="string" val="arg2" />
+				<sval type="string" val="Result" />
+			</sval>
+			<sval type="array" size="2">
+				<sval type="array" size="18">
+					<sval type="int" val="102" />
+					<sval type="string" val="wwsl.T2.function" />
+					<sval type="int" val="3" />
+					<sval type="int" val="131075" />
+					<sval type="int" val="1" />
+					<sval type="int" val="6" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="0" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="1" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="2" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+					<sval type="int" val="0" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="103" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="3" />
+				</sval>
+			</sval>
+			<sval type="array" size="3">
+				<sval type="array" size="2">
+					<sval type="int" val="10" />
+					<sval type="string" val="#Fn" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="9" />
+					<sval type="string" val="arg1" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="9" />
+					<sval type="string" val="arg2" />
+				</sval>
+			</sval>
+			<sval type="array" size="0" />
+			<sval type="int" val="0" />
+		</sval>
+	</codearray>
 </script>

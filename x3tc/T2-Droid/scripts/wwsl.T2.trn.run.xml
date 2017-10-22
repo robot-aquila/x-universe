@@ -4,7 +4,7 @@
 <script>
 	<name>wwsl.T2.trn.run</name>
 	<version>301</version>
-	<engineversion>50</engineversion>
+	<engineversion>44</engineversion>
 	<description>T2: Transport - Main</description>
 	<arguments />
 	<sourcetext>
@@ -2648,7 +2648,7 @@
 	<codearray>
 		<sval type="array" size="10">
 			<sval type="string" val="wwsl.T2.trn.run" />
-			<sval type="int" val="50" />
+			<sval type="int" val="44" />
 			<sval type="string" val="T2: Transport - Main" />
 			<sval type="int" val="301" />
 			<sval type="int" val="0" />
