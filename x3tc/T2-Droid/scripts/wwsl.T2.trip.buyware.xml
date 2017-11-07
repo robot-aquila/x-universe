@@ -1899,7 +1899,8 @@
 		</line>
 		<line linenr="270" indent="&#160;">
 			<text>else</text>
-			<text> </text>
+		</line>
+		<line linenr="271" indent="&#160;&#160;">
 			<text>if</text>
 			<text> </text>
 			<var>$Station</var>
@@ -1913,7 +1914,7 @@
 			<text> </text>
 			<var>[Ship]</var>
 		</line>
-		<line linenr="271" indent="&#160;&#160;" interruptable="@">
+		<line linenr="272" indent="&#160;&#160;&#160;" interruptable="@">
 			<var>$Amount</var>
 			<text> </text>
 			<text>=</text>
@@ -1937,10 +1938,10 @@
 			<text>=</text>
 			<var>$WareStruct</var>
 		</line>
-		<line linenr="272" indent="&#160;">
+		<line linenr="273" indent="&#160;&#160;">
 			<text>else</text>
 		</line>
-		<line linenr="273" indent="&#160;&#160;">
+		<line linenr="274" indent="&#160;&#160;&#160;">
 			<var>$Amount</var>
 			<text> </text>
 			<text>=</text>
@@ -1966,10 +1967,63 @@
 			<text> </text>
 			<text>bay</text>
 		</line>
-		<line linenr="274" indent="&#160;">
+		<line linenr="275" indent="&#160;&#160;">
 			<text>end</text>
 		</line>
-		<line linenr="275" indent="&#160;" interruptable="@">
+		<line linenr="276" indent="&#160;">
+			<text>end</text>
+		</line>
+		<line linenr="277" indent="&#160;">
+			<comment>* IN ANY CASES: amount cannot be greater than WAL - Ware Amount Limit</comment>
+		</line>
+		<line linenr="278" indent="&#160;" interruptable="@">
+			<var>$x</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>[THIS]</var>
+			<text>-&gt;</text>
+			<text> </text>
+			<text>call</text>
+			<text> </text>
+			<text>script</text>
+			<text> </text>
+			<call>wwsl.T2.function2</call>
+			<text> </text>
+			<text>:</text>
+			<text> </text>
+			<text>fn</text>
+			<text>=</text>
+			<var>604</var>
+			<text> </text>
+			<text>arg1</text>
+			<text>=</text>
+			<var>$WareStruct</var>
+			<text> </text>
+			<text>arg2</text>
+			<text>=</text>
+			<var>-1</var>
+			<text> </text>
+		</line>
+		<line linenr="279" indent="&#160;">
+			<text>skip</text>
+			<text> </text>
+			<text>if</text>
+			<text> </text>
+			<var>$x</var>
+			<text> </text>
+			<text>&gt;=</text>
+			<text> </text>
+			<var>$Amount</var>
+		</line>
+		<line linenr="280" indent="&#160;&#160;">
+			<var>$Amount</var>
+			<text> </text>
+			<text>=</text>
+			<text> </text>
+			<var>$x</var>
+		</line>
+		<line linenr="281" indent="&#160;" interruptable="@">
 			<var>$Amount</var>
 			<text> </text>
 			<text>=</text>
@@ -2001,66 +2055,66 @@
 			<text>=</text>
 			<var>$Price</var>
 		</line>
-		<line linenr="276" indent="">
+		<line linenr="282" indent="">
 			<text>endsub</text>
 		</line>
-		<line linenr="277" indent="" />
-		<line linenr="278" indent="" />
-		<line linenr="279" indent="">
+		<line linenr="283" indent="" />
+		<line linenr="284" indent="" />
+		<line linenr="285" indent="">
 			<comment>* In: $Station</comment>
 		</line>
-		<line linenr="280" indent="">
+		<line linenr="286" indent="">
 			<comment>* Out: $Precision</comment>
 		</line>
-		<line linenr="281" indent="">
+		<line linenr="287" indent="">
 			<comment>* Out: $CanExchange</comment>
 		</line>
-		<line linenr="282" indent="">
+		<line linenr="288" indent="">
 			<comment>* Out: $CanUseTransporter</comment>
 		</line>
-		<line linenr="283" indent="">
+		<line linenr="289" indent="">
 			<var>CheckCanExchangeAndGetPrecision</var>
 			<text>:</text>
 		</line>
-		<line linenr="284" indent="&#160;">
+		<line linenr="290" indent="&#160;">
 			<var>$Precision</var>
 			<text> </text>
 			<text>=</text>
 			<text> </text>
 			<var>null</var>
 		</line>
-		<line linenr="285" indent="&#160;">
+		<line linenr="291" indent="&#160;">
 			<text>gosub</text>
 			<text> </text>
 			<var>CanCargoExchange</var>
 			<text>:</text>
 		</line>
-		<line linenr="286" indent="&#160;">
+		<line linenr="292" indent="&#160;">
 			<text>do</text>
 			<text> </text>
 			<text>if</text>
 			<text> </text>
 			<var>$CanUseTransporter</var>
 		</line>
-		<line linenr="287" indent="&#160;&#160;">
+		<line linenr="293" indent="&#160;&#160;">
 			<text>gosub</text>
 			<text> </text>
 			<var>GetPrecision</var>
 			<text>:</text>
 		</line>
-		<line linenr="288" indent="">
+		<line linenr="294" indent="">
 			<text>endsub</text>
 		</line>
-		<line linenr="289" indent="" />
-		<line linenr="290" indent="" />
-		<line linenr="291" indent="">
+		<line linenr="295" indent="" />
+		<line linenr="296" indent="" />
+		<line linenr="297" indent="">
 			<comment>* Out: $Precision</comment>
 		</line>
-		<line linenr="292" indent="">
+		<line linenr="298" indent="">
 			<var>GetPrecision</var>
 			<text>:</text>
 		</line>
-		<line linenr="293" indent="&#160;">
+		<line linenr="299" indent="&#160;">
 			<var>$Precision</var>
 			<text> </text>
 			<text>=</text>
@@ -2071,7 +2125,7 @@
 			<text> </text>
 			<text>range</text>
 		</line>
-		<line linenr="294" indent="&#160;">
+		<line linenr="300" indent="&#160;">
 			<var>$Precision</var>
 			<text> </text>
 			<text>=</text>
@@ -2086,39 +2140,39 @@
 			<text> </text>
 			<var>3</var>
 		</line>
-		<line linenr="295" indent="">
+		<line linenr="301" indent="">
 			<text>endsub</text>
 		</line>
-		<line linenr="296" indent="" />
-		<line linenr="297" indent="" />
-		<line linenr="298" indent="">
+		<line linenr="302" indent="" />
+		<line linenr="303" indent="" />
+		<line linenr="304" indent="">
 			<comment>* In: $Station</comment>
 		</line>
-		<line linenr="299" indent="">
+		<line linenr="305" indent="">
 			<comment>* Out: $CanExchange</comment>
 		</line>
-		<line linenr="300" indent="">
+		<line linenr="306" indent="">
 			<comment>* Out: $CanUseTransporter</comment>
 		</line>
-		<line linenr="301" indent="">
+		<line linenr="307" indent="">
 			<var>CanCargoExchange</var>
 			<text>:</text>
 		</line>
-		<line linenr="302" indent="&#160;">
+		<line linenr="308" indent="&#160;">
 			<var>$CanExchange</var>
 			<text> </text>
 			<text>=</text>
 			<text> </text>
 			<var>[FALSE]</var>
 		</line>
-		<line linenr="303" indent="&#160;">
+		<line linenr="309" indent="&#160;">
 			<var>$CanUseTransporter</var>
 			<text> </text>
 			<text>=</text>
 			<text> </text>
 			<var>[FALSE]</var>
 		</line>
-		<line linenr="304" indent="&#160;" interruptable="@">
+		<line linenr="310" indent="&#160;" interruptable="@">
 			<text>do</text>
 			<text> </text>
 			<text>if</text>
@@ -2142,14 +2196,14 @@
 			<text>=</text>
 			<var>$Station</var>
 		</line>
-		<line linenr="305" indent="&#160;&#160;">
+		<line linenr="311" indent="&#160;&#160;">
 			<var>$CanExchange</var>
 			<text> </text>
 			<text>=</text>
 			<text> </text>
 			<var>[TRUE]</var>
 		</line>
-		<line linenr="306" indent="&#160;">
+		<line linenr="312" indent="&#160;">
 			<text>if</text>
 			<text> </text>
 			<var>$Station</var>
@@ -2163,14 +2217,14 @@
 			<text> </text>
 			<var>[Ship]</var>
 		</line>
-		<line linenr="307" indent="&#160;&#160;">
+		<line linenr="313" indent="&#160;&#160;">
 			<var>$tmp</var>
 			<text> </text>
 			<text>=</text>
 			<text> </text>
 			<var>0</var>
 		</line>
-		<line linenr="308" indent="&#160;&#160;">
+		<line linenr="314" indent="&#160;&#160;">
 			<text>do</text>
 			<text> </text>
 			<text>if</text>
@@ -2196,12 +2250,12 @@
 			<text> </text>
 			<text>bay</text>
 		</line>
-		<line linenr="309" indent="&#160;&#160;&#160;">
+		<line linenr="315" indent="&#160;&#160;&#160;">
 			<text>inc</text>
 			<text> </text>
 			<var>$tmp</var>
 		</line>
-		<line linenr="310" indent="&#160;&#160;">
+		<line linenr="316" indent="&#160;&#160;">
 			<text>do</text>
 			<text> </text>
 			<text>if</text>
@@ -2227,12 +2281,12 @@
 			<text> </text>
 			<text>bay</text>
 		</line>
-		<line linenr="311" indent="&#160;&#160;&#160;">
+		<line linenr="317" indent="&#160;&#160;&#160;">
 			<text>inc</text>
 			<text> </text>
 			<var>$tmp</var>
 		</line>
-		<line linenr="312" indent="&#160;&#160;">
+		<line linenr="318" indent="&#160;&#160;">
 			<text>if</text>
 			<text> </text>
 			<var>$tmp</var>
@@ -2241,31 +2295,31 @@
 			<text> </text>
 			<var>0</var>
 		</line>
-		<line linenr="313" indent="&#160;&#160;&#160;">
+		<line linenr="319" indent="&#160;&#160;&#160;">
 			<var>$CanExchange</var>
 			<text> </text>
 			<text>=</text>
 			<text> </text>
 			<var>[TRUE]</var>
 		</line>
-		<line linenr="314" indent="&#160;&#160;&#160;">
+		<line linenr="320" indent="&#160;&#160;&#160;">
 			<var>$CanUseTransporter</var>
 			<text> </text>
 			<text>=</text>
 			<text> </text>
 			<var>[TRUE]</var>
 		</line>
-		<line linenr="315" indent="&#160;&#160;">
+		<line linenr="321" indent="&#160;&#160;">
 			<text>end</text>
 		</line>
-		<line linenr="316" indent="&#160;">
+		<line linenr="322" indent="&#160;">
 			<text>end</text>
 		</line>
-		<line linenr="317" indent="">
+		<line linenr="323" indent="">
 			<text>endsub</text>
 		</line>
-		<line linenr="318" indent="" />
-		<line linenr="319" indent="">
+		<line linenr="324" indent="" />
+		<line linenr="325" indent="">
 			<text>return</text>
 			<text> </text>
 			<var>null</var>
@@ -2278,7 +2332,7 @@
 			<sval type="string" val="T2: Common - Buy ware" />
 			<sval type="int" val="301" />
 			<sval type="int" val="0" />
-			<sval type="array" size="149">
+			<sval type="array" size="150">
 				<sval type="string" val="WorkspaceStruct" />
 				<sval type="string" val="WareStruct" />
 				<sval type="string" val="WantedAmount" />
@@ -2426,10 +2480,11 @@
 				<sval type="string" val="Precision" />
 				<sval type="string" val="CanExchange" />
 				<sval type="string" val="Station.Sector" />
+				<sval type="string" val="x" />
 				<sval type="string" val="CanUseTransporter" />
 				<sval type="string" val="tmp" />
 			</sval>
-			<sval type="array" size="233">
+			<sval type="array" size="236">
 				<sval type="array" size="7">
 					<sval type="int" val="104" />
 					<sval type="int" val="4" />
@@ -4046,7 +4101,7 @@
 				</sval>
 				<sval type="array" size="2">
 					<sval type="int" val="1167" />
-					<sval type="int" val="207" />
+					<sval type="int" val="210" />
 				</sval>
 				<sval type="array" size="10">
 					<sval type="int" val="102" />
@@ -4062,7 +4117,7 @@
 				</sval>
 				<sval type="array" size="2">
 					<sval type="int" val="1167" />
-					<sval type="int" val="207" />
+					<sval type="int" val="210" />
 				</sval>
 				<sval type="array" size="7">
 					<sval type="int" val="104" />
@@ -4172,7 +4227,7 @@
 				</sval>
 				<sval type="array" size="2">
 					<sval type="int" val="1167" />
-					<sval type="int" val="207" />
+					<sval type="int" val="210" />
 				</sval>
 				<sval type="array" size="7">
 					<sval type="int" val="104" />
@@ -4247,7 +4302,7 @@
 					<sval type="int" val="705" />
 					<sval type="int" val="131074" />
 					<sval type="int" val="140" />
-					<sval type="int" val="-1610560507" />
+					<sval type="int" val="-1610560509" />
 					<sval type="int" val="12" />
 					<sval type="int" val="2004" />
 				</sval>
@@ -4274,6 +4329,44 @@
 					<sval type="int" val="141" />
 					<sval type="int" val="131074" />
 					<sval type="int" val="133" />
+				</sval>
+				<sval type="array" size="12">
+					<sval type="int" val="102" />
+					<sval type="string" val="wwsl.T2.function2" />
+					<sval type="int" val="147" />
+					<sval type="int" val="131075" />
+					<sval type="int" val="1" />
+					<sval type="int" val="3" />
+					<sval type="int" val="4" />
+					<sval type="int" val="604" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="1" />
+					<sval type="int" val="4" />
+					<sval type="int" val="-1" />
+				</sval>
+				<sval type="array" size="13">
+					<sval type="int" val="104" />
+					<sval type="int" val="-536817657" />
+					<sval type="int" val="3" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="147" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="141" />
+					<sval type="int" val="15" />
+					<sval type="int" val="4" />
+					<sval type="int" val="3" />
+					<sval type="int" val="-1" />
+					<sval type="int" val="4" />
+					<sval type="int" val="-2" />
+				</sval>
+				<sval type="array" size="7">
+					<sval type="int" val="104" />
+					<sval type="int" val="141" />
+					<sval type="int" val="1" />
+					<sval type="int" val="131074" />
+					<sval type="int" val="147" />
+					<sval type="int" val="1" />
+					<sval type="int" val="-1" />
 				</sval>
 				<sval type="array" size="14">
 					<sval type="int" val="102" />
@@ -4309,20 +4402,20 @@
 				</sval>
 				<sval type="array" size="2">
 					<sval type="int" val="1167" />
-					<sval type="int" val="217" />
+					<sval type="int" val="220" />
 				</sval>
 				<sval type="array" size="7">
 					<sval type="int" val="104" />
-					<sval type="int" val="-1610558456" />
+					<sval type="int" val="-1610557688" />
 					<sval type="int" val="1" />
 					<sval type="int" val="131074" />
-					<sval type="int" val="147" />
+					<sval type="int" val="148" />
 					<sval type="int" val="1" />
 					<sval type="int" val="-1" />
 				</sval>
 				<sval type="array" size="2">
 					<sval type="int" val="1167" />
-					<sval type="int" val="213" />
+					<sval type="int" val="216" />
 				</sval>
 				<sval type="array" size="1">
 					<sval type="int" val="1168" />
@@ -4374,7 +4467,7 @@
 				</sval>
 				<sval type="array" size="7">
 					<sval type="int" val="104" />
-					<sval type="int" val="147" />
+					<sval type="int" val="148" />
 					<sval type="int" val="1" />
 					<sval type="int" val="131075" />
 					<sval type="int" val="9" />
@@ -4384,7 +4477,7 @@
 				<sval type="array" size="10">
 					<sval type="int" val="102" />
 					<sval type="string" val="wwsl.T2.function1" />
-					<sval type="int" val="-1610555896" />
+					<sval type="int" val="-1610555128" />
 					<sval type="int" val="131075" />
 					<sval type="int" val="1" />
 					<sval type="int" val="2" />
@@ -4406,13 +4499,13 @@
 					<sval type="int" val="705" />
 					<sval type="int" val="131074" />
 					<sval type="int" val="140" />
-					<sval type="int" val="-1610553597" />
+					<sval type="int" val="-1610552829" />
 					<sval type="int" val="12" />
 					<sval type="int" val="2004" />
 				</sval>
 				<sval type="array" size="7">
 					<sval type="int" val="104" />
-					<sval type="int" val="148" />
+					<sval type="int" val="149" />
 					<sval type="int" val="1" />
 					<sval type="int" val="4" />
 					<sval type="int" val="0" />
@@ -4423,32 +4516,32 @@
 					<sval type="int" val="619" />
 					<sval type="int" val="131075" />
 					<sval type="int" val="1" />
-					<sval type="int" val="-1610554872" />
+					<sval type="int" val="-1610554104" />
 					<sval type="int" val="9" />
 					<sval type="int" val="1048610" />
 				</sval>
 				<sval type="array" size="2">
 					<sval type="int" val="142" />
-					<sval type="int" val="148" />
+					<sval type="int" val="149" />
 				</sval>
 				<sval type="array" size="6">
 					<sval type="int" val="619" />
 					<sval type="int" val="131074" />
 					<sval type="int" val="140" />
-					<sval type="int" val="-1610554360" />
+					<sval type="int" val="-1610553592" />
 					<sval type="int" val="9" />
 					<sval type="int" val="1048610" />
 				</sval>
 				<sval type="array" size="2">
 					<sval type="int" val="142" />
-					<sval type="int" val="148" />
+					<sval type="int" val="149" />
 				</sval>
 				<sval type="array" size="13">
 					<sval type="int" val="104" />
-					<sval type="int" val="-1610553597" />
+					<sval type="int" val="-1610552829" />
 					<sval type="int" val="3" />
 					<sval type="int" val="131074" />
-					<sval type="int" val="148" />
+					<sval type="int" val="149" />
 					<sval type="int" val="4" />
 					<sval type="int" val="0" />
 					<sval type="int" val="15" />
@@ -4469,7 +4562,7 @@
 				</sval>
 				<sval type="array" size="7">
 					<sval type="int" val="104" />
-					<sval type="int" val="147" />
+					<sval type="int" val="148" />
 					<sval type="int" val="1" />
 					<sval type="int" val="131075" />
 					<sval type="int" val="10" />
@@ -4503,7 +4596,7 @@
 					<sval type="string" val="Mode" />
 				</sval>
 			</sval>
-			<sval type="array" size="95">
+			<sval type="array" size="98">
 				<sval type="array" size="3">
 					<sval type="int" val="0" />
 					<sval type="int" val="1" />
@@ -4848,6 +4941,10 @@
 					<sval type="string" val="Out: $Amount" />
 				</sval>
 				<sval type="array" size="2">
+					<sval type="int" val="201" />
+					<sval type="int" val="5" />
+				</sval>
+				<sval type="array" size="2">
 					<sval type="int" val="204" />
 					<sval type="int" val="5" />
 				</sval>
@@ -4856,79 +4953,88 @@
 					<sval type="int" val="4" />
 				</sval>
 				<sval type="array" size="2">
-					<sval type="int" val="207" />
+					<sval type="int" val="205" />
+					<sval type="int" val="4" />
+				</sval>
+				<sval type="array" size="3">
+					<sval type="int" val="205" />
+					<sval type="int" val="1" />
+					<sval type="string" val="IN ANY CASES: amount cannot be greater than WAL - Ware Amount Limit" />
+				</sval>
+				<sval type="array" size="2">
+					<sval type="int" val="210" />
 					<sval type="int" val="2" />
 				</sval>
 				<sval type="array" size="2">
-					<sval type="int" val="207" />
+					<sval type="int" val="210" />
 					<sval type="int" val="2" />
 				</sval>
 				<sval type="array" size="3">
-					<sval type="int" val="207" />
+					<sval type="int" val="210" />
 					<sval type="int" val="1" />
 					<sval type="string" val="In: $Station" />
 				</sval>
 				<sval type="array" size="3">
-					<sval type="int" val="207" />
+					<sval type="int" val="210" />
 					<sval type="int" val="1" />
 					<sval type="string" val="Out: $Precision" />
 				</sval>
 				<sval type="array" size="3">
-					<sval type="int" val="207" />
+					<sval type="int" val="210" />
 					<sval type="int" val="1" />
 					<sval type="string" val="Out: $CanExchange" />
 				</sval>
 				<sval type="array" size="3">
-					<sval type="int" val="207" />
+					<sval type="int" val="210" />
 					<sval type="int" val="1" />
 					<sval type="string" val="Out: $CanUseTransporter" />
 				</sval>
 				<sval type="array" size="2">
-					<sval type="int" val="213" />
+					<sval type="int" val="216" />
 					<sval type="int" val="2" />
 				</sval>
 				<sval type="array" size="2">
-					<sval type="int" val="213" />
+					<sval type="int" val="216" />
 					<sval type="int" val="2" />
 				</sval>
 				<sval type="array" size="3">
-					<sval type="int" val="213" />
+					<sval type="int" val="216" />
 					<sval type="int" val="1" />
 					<sval type="string" val="Out: $Precision" />
 				</sval>
 				<sval type="array" size="2">
-					<sval type="int" val="217" />
+					<sval type="int" val="220" />
 					<sval type="int" val="2" />
 				</sval>
 				<sval type="array" size="2">
-					<sval type="int" val="217" />
+					<sval type="int" val="220" />
 					<sval type="int" val="2" />
 				</sval>
 				<sval type="array" size="3">
-					<sval type="int" val="217" />
+					<sval type="int" val="220" />
 					<sval type="int" val="1" />
 					<sval type="string" val="In: $Station" />
 				</sval>
 				<sval type="array" size="3">
-					<sval type="int" val="217" />
+					<sval type="int" val="220" />
 					<sval type="int" val="1" />
 					<sval type="string" val="Out: $CanExchange" />
 				</sval>
 				<sval type="array" size="3">
-					<sval type="int" val="217" />
+					<sval type="int" val="220" />
 					<sval type="int" val="1" />
 					<sval type="string" val="Out: $CanUseTransporter" />
 				</sval>
 				<sval type="array" size="2">
-					<sval type="int" val="231" />
+					<sval type="int" val="234" />
 					<sval type="int" val="4" />
 				</sval>
 				<sval type="array" size="2">
-					<sval type="int" val="231" />
+					<sval type="int" val="234" />
 					<sval type="int" val="4" />
 				</sval>
 				<sval type="array" size="2">
-					<sval type="int" val="232" />
+					<sval type="int" val="235" />
 					<sval type="int" val="2" />
 				</sval>
 			</sval>
